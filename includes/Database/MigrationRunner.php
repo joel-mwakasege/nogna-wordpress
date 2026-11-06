@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 final class MigrationRunner
 {
     private const VERSION_OPTION = 'nogna_billing_schema_version';
+    private const SCHEMA_VERSION = '0.2.0';
 
     public function run(): void
     {
@@ -14,9 +15,9 @@ final class MigrationRunner
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
         $charset = $wpdb->get_charset_collate();
-        $table = $wpdb->prefix . 'nogna_migrations';
+        $migrations = $wpdb->prefix . 'nogna_migrations';
 
-        $sql = "CREATE TABLE {$table} (
+        dbDelta("CREATE TABLE {$migrations} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             component_slug varchar(100) NOT NULL,
             migration_version varchar(50) NOT NULL,
@@ -25,15 +26,83 @@ final class MigrationRunner
             applied_at datetime NOT NULL,
             PRIMARY KEY  (id),
             UNIQUE KEY component_version (component_slug, migration_version)
-        ) {$charset};";
+        ) {$charset};");
 
-        dbDelta($sql);
+        $this->create_core_tables($charset);
 
         $version = get_option(self::VERSION_OPTION, '0.0.0');
-        if (version_compare($version, NOGNA_BILLING_VERSION, '>=')) {
-            return;
+        if (version_compare($version, self::SCHEMA_VERSION, '<')) {
+            update_option(self::VERSION_OPTION, self::SCHEMA_VERSION, false);
         }
+    }
 
-        update_option(self::VERSION_OPTION, NOGNA_BILLING_VERSION, false);
+    private function create_core_tables(string $charset): void
+    {
+        global $wpdb;
+
+        $companies = $wpdb->prefix . 'nogna_companies';
+        $members = $wpdb->prefix . 'nogna_company_users';
+        $extensions = $wpdb->prefix . 'nogna_extensions';
+        $company_extensions = $wpdb->prefix . 'nogna_company_extensions';
+
+        dbDelta("CREATE TABLE {$companies} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            slug varchar(190) NOT NULL,
+            name varchar(190) NOT NULL,
+            base_currency char(3) NOT NULL DEFAULT 'USD',
+            timezone varchar(100) NOT NULL DEFAULT 'UTC',
+            settings_json longtext NULL,
+            created_by bigint(20) unsigned NOT NULL,
+            created_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            deleted_at datetime NULL,
+            deleted_by bigint(20) unsigned NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY slug (slug),
+            KEY created_by (created_by),
+            KEY deleted_at (deleted_at)
+        ) {$charset};");
+
+        dbDelta("CREATE TABLE {$members} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            company_id bigint(20) unsigned NOT NULL,
+            user_id bigint(20) unsigned NOT NULL,
+            role varchar(40) NOT NULL DEFAULT 'user',
+            status varchar(30) NOT NULL DEFAULT 'active',
+            joined_at datetime NULL,
+            created_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY company_user (company_id, user_id),
+            KEY company_role (company_id, role),
+            KEY user_status (user_id, status)
+        ) {$charset};");
+
+        dbDelta("CREATE TABLE {$extensions} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            slug varchar(100) NOT NULL,
+            version varchar(30) NOT NULL,
+            status varchar(30) NOT NULL DEFAULT 'installed',
+            installed_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY slug (slug)
+        ) {$charset};");
+
+        dbDelta("CREATE TABLE {$company_extensions} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            company_id bigint(20) unsigned NOT NULL,
+            extension_slug varchar(100) NOT NULL,
+            status varchar(30) NOT NULL DEFAULT 'disabled',
+            settings_json longtext NULL,
+            enabled_by bigint(20) unsigned NULL,
+            enabled_at datetime NULL,
+            disabled_at datetime NULL,
+            created_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            PRIMARY KEY  (id),
+            UNIQUE KEY company_extension (company_id, extension_slug),
+            KEY company_status (company_id, status)
+        ) {$charset};");
     }
 }
