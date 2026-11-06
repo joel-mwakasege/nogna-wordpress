@@ -3,7 +3,7 @@
  * Plugin Name: Nogna Billing
  * Plugin URI: https://github.com/joel-mwakasege/nogna-wordpress
  * Description: Native WordPress billing and financial management application for multi-company workspaces.
- * Version: 0.1.0
+ * Version: 0.2.0
  * Author: Joel Mwakasege
  * Author URI: https://github.com/joel-mwakasege
  * Text Domain: nogna-billing
@@ -13,7 +13,7 @@
 
 defined('ABSPATH') || exit;
 
-define('NOGNA_BILLING_VERSION', '0.1.0');
+define('NOGNA_BILLING_VERSION', '0.2.0');
 define('NOGNA_BILLING_FILE', __FILE__);
 define('NOGNA_BILLING_DIR', plugin_dir_path(__FILE__));
 define('NOGNA_BILLING_URL', plugin_dir_url(__FILE__));
