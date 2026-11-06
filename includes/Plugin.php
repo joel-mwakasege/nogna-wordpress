@@ -3,6 +3,7 @@ namespace Nogna\Billing;
 
 defined('ABSPATH') || exit;
 
+use Nogna\Billing\Companies\CompanyController;
 use Nogna\Billing\Database\MigrationRunner;
 
 final class Plugin
@@ -54,6 +55,8 @@ final class Plugin
             },
             'permission_callback' => '__return_true',
         ]);
+
+        (new CompanyController())->register_routes();
     }
 
     private function register_roles(): void
