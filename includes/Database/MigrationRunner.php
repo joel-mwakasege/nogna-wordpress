@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 final class MigrationRunner
 {
     private const VERSION_OPTION = 'nogna_billing_schema_version';
-    private const SCHEMA_VERSION = '0.2.0';
+    private const SCHEMA_VERSION = '0.3.0';
 
     public function run(): void
     {
@@ -42,6 +42,7 @@ final class MigrationRunner
 
         $companies = $wpdb->prefix . 'nogna_companies';
         $members = $wpdb->prefix . 'nogna_company_users';
+        $customers = $wpdb->prefix . 'nogna_customers';
         $extensions = $wpdb->prefix . 'nogna_extensions';
         $company_extensions = $wpdb->prefix . 'nogna_company_extensions';
 
@@ -76,6 +77,27 @@ final class MigrationRunner
             UNIQUE KEY company_user (company_id, user_id),
             KEY company_role (company_id, role),
             KEY user_status (user_id, status)
+        ) {$charset};");
+
+        dbDelta("CREATE TABLE {$customers} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            company_id bigint(20) unsigned NOT NULL,
+            customer_number varchar(80) NULL,
+            name varchar(190) NOT NULL,
+            email varchar(190) NULL,
+            phone varchar(80) NULL,
+            tax_number varchar(120) NULL,
+            address_json longtext NULL,
+            notes text NULL,
+            created_by bigint(20) unsigned NOT NULL,
+            created_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            deleted_at datetime NULL,
+            deleted_by bigint(20) unsigned NULL,
+            PRIMARY KEY  (id),
+            KEY company_name (company_id, name),
+            KEY company_email (company_id, email),
+            KEY company_deleted (company_id, deleted_at)
         ) {$charset};");
 
         dbDelta("CREATE TABLE {$extensions} (
