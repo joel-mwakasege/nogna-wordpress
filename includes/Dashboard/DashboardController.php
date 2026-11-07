@@ -16,7 +16,13 @@ final class DashboardController
     {
         $page_id = (int) get_option('nogna_dashboard_page_id', 0);
 
-        if (!$page_id || !is_page($page_id)) {
+        $is_dashboard_page = $page_id && is_page($page_id);
+        $has_dashboard_shortcode = is_singular() && has_shortcode(
+            (string) get_post_field('post_content', get_queried_object_id()),
+            'nogna_dashboard'
+        );
+
+        if (!$is_dashboard_page && !$has_dashboard_shortcode) {
             return;
         }
 
