@@ -1,10 +1,11 @@
 <?php
-namespace Nogna\Billing;
+namespace Nogna\\Billing;
 
 defined('ABSPATH') || exit;
 
-use Nogna\Billing\Companies\CompanyController;
-use Nogna\Billing\Database\MigrationRunner;
+use Nogna\\Billing\\Companies\\CompanyController;
+use Nogna\\Billing\\Customers\\CustomerController;
+use Nogna\\Billing\\Database\\MigrationRunner;
 
 final class Plugin
 {
@@ -44,8 +45,8 @@ final class Plugin
     {
         register_rest_route('nogna/v1', '/health', [
             'methods' => 'GET',
-            'callback' => static function (): \WP_REST_Response {
-                return new \WP_REST_Response([
+            'callback' => static function (): \\WP_REST_Response {
+                return new \\WP_REST_Response([
                     'data' => [
                         'plugin' => 'nogna-billing',
                         'version' => NOGNA_BILLING_VERSION,
@@ -57,6 +58,7 @@ final class Plugin
         ]);
 
         (new CompanyController())->register_routes();
+        (new CustomerController())->register_routes();
     }
 
     private function register_roles(): void
