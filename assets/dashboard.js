@@ -52,6 +52,8 @@
     const customers = state.customers.filter((customer) => [customer.name, customer.email, customer.phone].join(' ').toLowerCase().includes(term));
     $('#nogna-customer-result-count').textContent = customers.length + ' customer' + (customers.length === 1 ? '' : 's');
     $('#nogna-customer-count').textContent = state.customers.length;
+    const secondaryCount = $('#nogna-customer-count-secondary');
+    if (secondaryCount) secondaryCount.textContent = state.customers.length;
     if (!customers.length) {
       rows.innerHTML = '<tr><td colspan="5" class="nogna-table-empty">No customers found.</td></tr>';
       return;
@@ -93,6 +95,8 @@
     }
     state.companyId = companies[0].id;
     select.value = state.companyId;
+    const activeWorkspace = $('#nogna-active-workspace');
+    if (activeWorkspace) activeWorkspace.textContent = companies[0].name;
     loadCustomers();
   }
 
