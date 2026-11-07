@@ -47,7 +47,65 @@ final class DashboardController
 
         ob_start();
         ?>
-        <div id="nogna-dashboard" class="nogna-dashboard">
+        <div id="nogna-dashboard" class="nogna-dashboard onboarding-active">
+            <div id="nogna-onboarding" class="nogna-onboarding">
+                <div class="nogna-onboarding-account">
+                    <div class="nogna-account-avatar">◯</div>
+                    <div><strong><?php echo esc_html(wp_get_current_user()->user_email); ?></strong><small>FREE</small></div>
+                </div>
+                <button class="nogna-onboarding-skip" data-skip-onboarding>Skip</button>
+
+                <section class="nogna-onboarding-step is-active" data-onboarding-step="welcome">
+                    <div class="nogna-welcome-mark">N</div>
+                    <p class="nogna-onboarding-eyebrow">WELCOME TO NOGNA</p>
+                    <h2>Nogna handles</h2>
+                    <h2 class="nogna-blue-text">your financial workspace.</h2>
+                    <div class="nogna-onboarding-actions">
+                        <button class="nogna-connect-button" disabled>Connect Cloud <span>◆</span></button>
+                        <button class="nogna-start-button" data-start-onboarding>Start Fresh <span>→</span></button>
+                    </div>
+                </section>
+
+                <section class="nogna-onboarding-step" data-onboarding-step="identity">
+                    <div class="nogna-step-heading"><h2>Company Identity</h2><p>What is your company's name?</p></div>
+                    <div class="nogna-form-card">
+                        <h3>GENERAL INFORMATION</h3>
+                        <label>Company Name <em>*</em><input id="nogna-onboarding-name" placeholder="Your company name" required></label>
+                        <div class="nogna-form-row">
+                            <label>Trade Name<input placeholder="e.g. Brand Name"></label>
+                            <label>Company Suffix<input placeholder="e.g. Department, Branch Office"></label>
+                        </div>
+                        <div class="nogna-form-row">
+                            <label>Owner<input value="<?php echo esc_attr(wp_get_current_user()->display_name); ?>"></label>
+                            <label>Legal Form<select><option>Self-employed/Freelancer</option><option>Limited company</option><option>Partnership</option></select></label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="nogna-onboarding-step" data-onboarding-step="contact">
+                    <div class="nogna-step-heading"><h2>Contact Details</h2><p>Contact information for your customers</p></div>
+                    <div class="nogna-form-card">
+                        <h3>CONTACT INFORMATION</h3>
+                        <label>Contact Person<input id="nogna-contact-person" value="<?php echo esc_attr(wp_get_current_user()->display_name); ?>"></label>
+                        <div class="nogna-form-row">
+                            <label>Email Address<input id="nogna-contact-email" value="<?php echo esc_attr(wp_get_current_user()->user_email); ?>"></label>
+                            <label>Phone Number<input id="nogna-contact-phone" placeholder="+255..."></label>
+                        </div>
+                        <label>Website<input placeholder="yourcompany.com"></label>
+                    </div>
+                    <div class="nogna-form-card nogna-electronic-card">
+                        <h3>ELECTRONIC INVOICE ADDRESS</h3>
+                        <label>Electronic Address<input placeholder="billing@example.com"></label>
+                    </div>
+                </section>
+
+                <div class="nogna-onboarding-footer">
+                    <button class="nogna-back-button" data-onboarding-back>‹ <span>Back</span></button>
+                    <div class="nogna-progress"><i class="is-active"></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <button class="nogna-next-button" data-onboarding-next>Next <span>→</span></button>
+                </div>
+            </div>
+            <div id="nogna-app-content">
             <header class="nogna-topbar">
                 <div>
                     <div class="nogna-eyebrow">NOGNA BILLING</div>
@@ -156,6 +214,7 @@ final class DashboardController
                         <div class="nogna-modal-actions"><button type="button" class="nogna-button nogna-button-light" data-close-customer>Cancel</button><button class="nogna-button" type="submit">Save customer</button></div>
                     </form>
                 </div>
+            </div>
             </div>
         </div>
         <?php
