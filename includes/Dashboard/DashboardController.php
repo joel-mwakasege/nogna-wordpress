@@ -140,23 +140,31 @@ final class DashboardController
 
                 <main class="nogna-content">
                     <section id="nogna-section-overview" class="nogna-section is-visible">
-                        <div class="nogna-welcome">
+                        <div class="nogna-home-heading">
                             <div>
-                                <p class="nogna-muted">Your financial workspace</p>
-                                <h2>Good to see you.</h2>
+                                <h2>Good to see you</h2>
+                                <p><?php echo esc_html(wp_date('l, F j')); ?> <span class="nogna-status-dot"></span> Personal workspace</p>
                             </div>
-                            <button class="nogna-button" data-open-company>+ Create workspace</button><button class="nogna-button" data-open-customer>+ Add customer</button>
+                            <button class="nogna-workspace-chip" data-open-company><span class="nogna-workspace-avatar">N</span><span><small>Workspace</small><strong id="nogna-active-workspace">Select workspace</strong></span><span>⌄</span></button>
                         </div>
-                        <div class="nogna-stat-grid">
-                            <article class="nogna-stat-card"><span>Revenue</span><strong>—</strong><small>Invoices will appear here</small></article>
-                            <article class="nogna-stat-card"><span>Outstanding</span><strong>—</strong><small>Track unpaid invoices</small></article>
-                            <article class="nogna-stat-card"><span>Customers</span><strong id="nogna-customer-count">0</strong><small>Active customers</small></article>
+                        <div class="nogna-period-row">
+                            <div class="nogna-period-tabs"><button class="is-active">1M</button><button class="is-active">3M</button><button>6M</button><button>1Y</button><button>All</button></div>
+                            <button class="nogna-icon-button" aria-label="Dashboard settings">☷</button>
                         </div>
-                        <div class="nogna-empty-card">
-                            <div class="nogna-empty-icon">✦</div>
-                            <h3>Your workspace is ready</h3>
-                            <p>Start by adding your first customer. Invoices, payments, expenses and reports will build on this foundation.</p>
-                            <button class="nogna-button nogna-button-light" data-open-customer>Add your first customer</button>
+                        <div class="nogna-kpi-strip">
+                            <article class="nogna-kpi is-selected"><span>Customers</span><strong id="nogna-customer-count">0</strong><small>Active records</small></article>
+                            <article class="nogna-kpi"><span>Invoices</span><strong>—</strong><small>Not available yet</small></article>
+                            <article class="nogna-kpi"><span>Expenses</span><strong>—</strong><small>Not available yet</small></article>
+                            <article class="nogna-kpi"><span>Net result</span><strong>—</strong><small>Not available yet</small></article>
+                        </div>
+                        <section class="nogna-chart-panel">
+                            <div class="nogna-panel-heading"><div><h3>Workspace activity</h3><p>Customer records over the selected period</p></div><span class="nogna-legend"><i></i> Customers</span></div>
+                            <div class="nogna-empty-chart"><div class="nogna-chart-line"></div><span>No financial activity to display yet</span><small>Add customers now; invoices and financial charts will appear as those modules are implemented.</small></div>
+                        </section>
+                        <div class="nogna-summary-grid">
+                            <article class="nogna-summary-card"><div><span>Open receivables</span><strong>—</strong></div><small>Invoices will appear here</small></article>
+                            <article class="nogna-summary-card"><div><span>Overdue</span><strong>—</strong></div><small>Payment tracking will appear here</small></article>
+                            <article class="nogna-summary-card"><div><span>Customers</span><strong id="nogna-customer-count-secondary">0</strong></div><small>Active workspace contacts</small></article>
                         </div>
                     </section>
 
