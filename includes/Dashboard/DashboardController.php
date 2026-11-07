@@ -9,6 +9,28 @@ final class DashboardController
     {
         add_shortcode('nogna_dashboard', [$this, 'render']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
+        add_action('template_redirect', [$this, 'render_standalone_page']);
+    }
+
+    public function render_standalone_page(): void
+    {
+        $page_id = (int) get_option('nogna_dashboard_page_id', 0);
+
+        if (!$page_id || !is_page($page_id)) {
+            return;
+        }
+
+        if (!is_user_logged_in()) {
+            auth_redirect();
+        }
+
+        status_header(200);
+        nocache_headers();
+        echo '<!doctype html><html ' . get_language_attributes() . '><head><meta charset="' . esc_attr(get_bloginfo('charset')) . '"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Nogna Dashboard</title>';
+        wp_head();
+        echo '</head><body class="nogna-standalone">' . $this->render() . '</body></html>';
+        wp_footer();
+        exit;
     }
 
     public function render(): string
