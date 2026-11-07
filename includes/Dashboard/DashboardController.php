@@ -152,6 +152,7 @@ final class DashboardController
 
         wp_enqueue_style('nogna-dashboard', NOGNA_BILLING_URL . 'assets/dashboard.css', [], NOGNA_BILLING_VERSION);
         wp_enqueue_script('nogna-dashboard', NOGNA_BILLING_URL . 'assets/dashboard.js', [], NOGNA_BILLING_VERSION, true);
+        wp_script_add_data('nogna-dashboard', 'strategy', 'defer');
         wp_localize_script('nogna-dashboard', 'NognaDashboard', [
             'restUrl' => esc_url_raw(rest_url('nogna/v1')),
             'nonce' => wp_create_nonce('wp_rest'),
