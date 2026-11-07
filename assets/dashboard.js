@@ -91,7 +91,27 @@
     } catch (error) { if (!cached) notice(error.message, 'error'); }
   }
 
+  function openCompany() {
+    const form = $('#nogna-company-form');
+    form.reset();
+    form.elements.base_currency.value = 'TZS';
+    form.elements.timezone.value = 'Africa/Dar_es_Salaam';
+    $('#nogna-company-modal').classList.add('is-open');
+    $('#nogna-company-modal').setAttribute('aria-hidden', 'false');
+    form.elements.name.focus();
+  }
+
+  function closeCompany() {
+    $('#nogna-company-modal').classList.remove('is-open');
+    $('#nogna-company-modal').setAttribute('aria-hidden', 'true');
+  }
+
   function openCustomer(customer) {
+    if (!state.companyId) {
+      notice('Create a workspace before adding a customer.', 'error');
+      openCompany();
+      return;
+    }
     state.editingId = customer ? customer.id : null;
     const form = $('#nogna-customer-form');
     form.reset();
@@ -116,6 +136,8 @@
   document.addEventListener('click', async (event) => {
     const sectionButton = event.target.closest('[data-section]');
     if (sectionButton && !sectionButton.disabled) showSection(sectionButton.dataset.section);
+    if (event.target.closest('[data-open-company]')) openCompany();
+    if (event.target.closest('[data-close-company]')) closeCompany();
     if (event.target.closest('[data-open-customer]')) openCustomer();
     if (event.target.closest('[data-close-customer]')) closeCustomer();
     const editButton = event.target.closest('[data-edit]');
@@ -129,6 +151,25 @@
 
   $('#nogna-company-select').addEventListener('change', async (event) => { state.companyId = event.target.value; await loadCustomers(); });
   $('#nogna-customer-search').addEventListener('input', renderCustomers);
+  $('#nogna-company-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const name = form.elements.name.value.trim();
+    const payload = {
+      name: name,
+      slug: form.elements.slug.value.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
+      base_currency: form.elements.base_currency.value.toUpperCase(),
+      timezone: form.elements.timezone.value.trim()
+    };
+    try {
+      await api('/companies', { method: 'POST', body: JSON.stringify(payload) });
+      closeCompany();
+      localStorage.removeItem(cacheKey('companies'));
+      notice('Workspace created.', 'success');
+      await loadCompanies();
+    } catch (error) { notice(error.message, 'error'); }
+  });
+
   $('#nogna-customer-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!state.companyId) return notice('Select a workspace first.', 'error');
