@@ -53,7 +53,6 @@ final class DashboardController
                     <div class="nogna-account-avatar">◯</div>
                     <div><strong><?php echo esc_html(wp_get_current_user()->user_email); ?></strong><small>FREE</small></div>
                 </div>
-                <button class="nogna-onboarding-skip" data-skip-onboarding>Skip</button>
 
                 <section class="nogna-onboarding-step is-active" data-onboarding-step="welcome">
                     <div class="nogna-welcome-mark">N</div>
@@ -61,8 +60,7 @@ final class DashboardController
                     <h2>Nogna handles</h2>
                     <h2 class="nogna-blue-text">your financial workspace.</h2>
                     <div class="nogna-onboarding-actions">
-                        <button class="nogna-connect-button" disabled>Connect Cloud <span>◆</span></button>
-                        <button class="nogna-start-button" data-start-onboarding>Start Fresh <span>→</span></button>
+                        <button class="nogna-start-button" data-start-onboarding>Set up my workspace <span>→</span></button>
                     </div>
                 </section>
 
