@@ -214,6 +214,13 @@ final class DashboardController
                 </div>
             </div>
             </div>
+            <nav class="nogna-mobile-nav" aria-label="Mobile navigation">
+                <button class="is-active" data-section="overview"><span>⌂</span>Home</button>
+                <button data-section="customers"><span>◉</span>Customers</button>
+                <button data-open-customer class="nogna-mobile-add"><span>＋</span></button>
+                <button disabled><span>▣</span>Invoices</button>
+                <button data-section="more"><span>•••</span>More</button>
+            </nav>
         </div>
         <?php
         return (string) ob_get_clean();
