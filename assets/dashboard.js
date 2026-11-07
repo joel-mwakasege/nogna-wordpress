@@ -50,21 +50,32 @@
     const rows = $('#nogna-customer-rows');
     const term = ($('#nogna-customer-search').value || '').toLowerCase();
     const customers = state.customers.filter((customer) => [customer.name, customer.email, customer.phone].join(' ').toLowerCase().includes(term));
-    $('#nogna-customer-result-count').textContent = customers.length + ' customer' + (customers.length === 1 ? '' : 's');
     $('#nogna-customer-count').textContent = state.customers.length;
     const secondaryCount = $('#nogna-customer-count-secondary');
     if (secondaryCount) secondaryCount.textContent = state.customers.length;
     if (!customers.length) {
-      rows.innerHTML = '<tr><td colspan="5" class="nogna-table-empty">No customers found.</td></tr>';
+      rows.innerHTML = '<div class="nogna-record-empty">No customers found.</div>';
       return;
     }
-    rows.innerHTML = customers.map((customer) => '<tr>' +
-      '<td><span class="nogna-customer-name">' + escapeHtml(customer.name) + '</span></td>' +
-      '<td>' + escapeHtml(customer.email || '—') + '</td>' +
-      '<td>' + escapeHtml(customer.phone || '—') + '</td>' +
-      '<td>' + escapeHtml((customer.created_at || '').slice(0, 10) || '—') + '</td>' +
-      '<td><div class="nogna-row-actions"><button data-edit="' + customer.id + '">Edit</button><button data-delete="' + customer.id + '">Delete</button></div></td>' +
-      '</tr>').join('');
+    rows.innerHTML = customers.map((customer, index) => '<button class="nogna-record-item' + (index === 0 ? ' is-selected' : '') + '" data-customer-id="' + customer.id + '">' +
+      '<span class="nogna-record-avatar">' + escapeHtml((customer.name || '?').charAt(0).toUpperCase()) + '</span><span><strong>' + escapeHtml(customer.name) + '</strong><small>' + escapeHtml(customer.email || customer.phone || 'Customer') + '</small></span><b>⋮</b></button>').join('');
+    selectCustomer(customers[0]);
+  }
+
+  function selectCustomer(customer) {
+    if (!customer) return;
+    document.querySelectorAll('.nogna-record-item').forEach((item) => item.classList.toggle('is-selected', item.dataset.customerId === String(customer.id)));
+    $('#nogna-detail-avatar').textContent = (customer.name || '?').charAt(0).toUpperCase();
+    $('#nogna-detail-name').textContent = customer.name;
+    $('#nogna-detail-meta').textContent = 'Customer · Active';
+    $('#nogna-detail-name-input').value = customer.name || '';
+    $('#nogna-detail-tax').value = customer.tax_number || '';
+    $('#nogna-detail-email').value = customer.email || '';
+    $('#nogna-detail-phone').value = customer.phone || '';
+    $('#nogna-detail-city').value = customer.address && customer.address.city ? customer.address.city : '';
+    $('#nogna-detail-notes').value = customer.notes || '';
+    $('#nogna-customer-detail-empty').hidden = true;
+    $('#nogna-customer-detail').hidden = false;
   }
 
   function escapeHtml(value) {
@@ -173,6 +184,8 @@
     if (event.target.closest('[data-close-company]')) closeCompany();
     if (event.target.closest('[data-open-customer]')) openCustomer();
     if (event.target.closest('[data-close-customer]')) closeCustomer();
+    const recordButton = event.target.closest('[data-customer-id]');
+    if (recordButton) selectCustomer(state.customers.find((customer) => String(customer.id) === recordButton.dataset.customerId));
     const editButton = event.target.closest('[data-edit]');
     if (editButton) openCustomer(state.customers.find((customer) => String(customer.id) === editButton.dataset.edit));
     const deleteButton = event.target.closest('[data-delete]');
