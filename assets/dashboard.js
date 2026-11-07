@@ -4,6 +4,10 @@
   const state = { companyId: null, customers: [], editingId: null };
   const config = window.NognaDashboard || {};
   const $ = (selector) => document.querySelector(selector);
+  const cacheKey = (name, id) => 'nogna:' + name + ':' + (id || 'all');
+  const readCache = (name, id) => { try { return JSON.parse(localStorage.getItem(cacheKey(name, id)) || 'null'); } catch (error) { return null; } };
+  const writeCache = (name, id, value) => { try { localStorage.setItem(cacheKey(name, id), JSON.stringify(value)); } catch (error) {} };
+
   const api = (path, options = {}) => fetch(config.restUrl + path, {
     credentials: 'include',
     ...options,
@@ -53,27 +57,38 @@
 
   async function loadCustomers() {
     if (!state.companyId) return;
+    const cached = readCache('customers', state.companyId);
+    if (cached) { state.customers = cached; renderCustomers(); }
     try {
       const response = await api('/companies/' + state.companyId + '/customers');
       state.customers = response.data || [];
+      writeCache('customers', state.companyId, state.customers);
       renderCustomers();
-    } catch (error) { notice(error.message, 'error'); }
+    } catch (error) { if (!cached) notice(error.message, 'error'); }
+  }
+
+  function applyCompanies(companies) {
+    const select = $('#nogna-company-select');
+    select.innerHTML = companies.map((company) => '<option value="' + company.id + '">' + escapeHtml(company.name) + '</option>').join('');
+    if (!companies.length) {
+      select.innerHTML = '<option value="">No workspace</option>';
+      notice('Create a company workspace before adding customers.', 'error');
+      return;
+    }
+    state.companyId = companies[0].id;
+    select.value = state.companyId;
+    loadCustomers();
   }
 
   async function loadCompanies() {
+    const cached = readCache('companies');
+    if (cached) applyCompanies(cached);
     try {
       const response = await api('/companies');
-      const select = $('#nogna-company-select');
-      select.innerHTML = (response.data || []).map((company) => '<option value="' + company.id + '">' + escapeHtml(company.name) + '</option>').join('');
-      if (!response.data || !response.data.length) {
-        select.innerHTML = '<option value="">No workspace</option>';
-        notice('Create a company workspace before adding customers.', 'error');
-        return;
-      }
-      state.companyId = response.data[0].id;
-      select.value = state.companyId;
-      await loadCustomers();
-    } catch (error) { notice(error.message, 'error'); }
+      const companies = response.data || [];
+      writeCache('companies', null, companies);
+      applyCompanies(companies);
+    } catch (error) { if (!cached) notice(error.message, 'error'); }
   }
 
   function openCustomer(customer) {
