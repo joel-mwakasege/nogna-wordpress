@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 use Nogna\Billing\Companies\CompanyController;
 use Nogna\Billing\Customers\CustomerController;
 use Nogna\Billing\Database\MigrationRunner;
+use Nogna\Billing\Dashboard\DashboardController;
 
 final class Plugin
 {
@@ -27,12 +28,14 @@ final class Plugin
     private function register_hooks(): void
     {
         add_action('rest_api_init', [$this, 'register_rest_routes']);
+        (new DashboardController())->register();
     }
 
     private function activate_plugin(): void
     {
         $this->register_roles();
         (new MigrationRunner())->run();
+        $this->create_dashboard_page();
         update_option('nogna_billing_version', NOGNA_BILLING_VERSION, false);
     }
 
@@ -66,5 +69,26 @@ final class Plugin
         add_role('nogna_owner', 'Nogna Owner', ['read' => true]);
         add_role('nogna_administrator', 'Nogna Administrator', ['read' => true]);
         add_role('nogna_user', 'Nogna User', ['read' => true]);
+    }
+
+    private function create_dashboard_page(): void
+    {
+        $existing_id = (int) get_option('nogna_dashboard_page_id', 0);
+
+        if ($existing_id && get_post_status($existing_id)) {
+            return;
+        }
+
+        $page_id = wp_insert_post([
+            'post_title' => 'Nogna Dashboard',
+            'post_name' => 'nogna-dashboard',
+            'post_content' => '[nogna_dashboard]',
+            'post_status' => 'publish',
+            'post_type' => 'page',
+        ]);
+
+        if ($page_id && !is_wp_error($page_id)) {
+            update_option('nogna_dashboard_page_id', $page_id, false);
+        }
     }
 }
