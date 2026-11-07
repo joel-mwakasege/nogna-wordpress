@@ -175,19 +175,31 @@ final class DashboardController
                     </section>
 
                     <section id="nogna-section-customers" class="nogna-section">
-                        <div class="nogna-page-heading">
-                            <div><p class="nogna-muted">Relationships</p><h2>Customers</h2></div>
-                            <button class="nogna-button" data-open-customer>+ Add customer</button>
-                        </div>
-                        <div class="nogna-toolbar">
-                            <input id="nogna-customer-search" type="search" placeholder="Search customers..." />
-                            <span id="nogna-customer-result-count" class="nogna-muted"></span>
-                        </div>
-                        <div class="nogna-table-card">
-                            <table>
-                                <thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Added</th><th></th></tr></thead>
-                                <tbody id="nogna-customer-rows"><tr><td colspan="5" class="nogna-table-empty">Select a workspace to load customers.</td></tr></tbody>
-                            </table>
+                        <div class="nogna-records-layout">
+                            <aside class="nogna-record-list">
+                                <div class="nogna-record-list-heading"><span>CUSTOMERS</span><button data-open-customer aria-label="Add customer">＋</button></div>
+                                <input id="nogna-customer-search" class="nogna-record-search" type="search" placeholder="Search customers..." />
+                                <div id="nogna-customer-rows" class="nogna-record-items"><div class="nogna-record-empty">No customers yet.</div></div>
+                                <button class="nogna-create-record" data-open-customer>＋ <span>Create customer</span></button>
+                            </aside>
+                            <main class="nogna-record-detail">
+                                <div class="nogna-detail-header">
+                                    <div><span class="nogna-detail-avatar" id="nogna-detail-avatar">—</span><div><h2 id="nogna-detail-name">Customers</h2><p id="nogna-detail-meta">Select a customer to view details</p></div></div>
+                                    <button class="nogna-button" data-open-customer>+ Add customer</button>
+                                </div>
+                                <nav class="nogna-detail-tabs"><button class="is-active">Master data</button><button disabled>Address</button><button disabled>Contact</button><button disabled>History</button></nav>
+                                <div id="nogna-customer-detail-empty" class="nogna-detail-empty">Select a customer from the list to view its master data.</div>
+                                <div id="nogna-customer-detail" class="nogna-detail-form" hidden>
+                                    <div class="nogna-detail-grid">
+                                        <label>Customer name<input id="nogna-detail-name-input" readonly></label>
+                                        <label>Tax number<input id="nogna-detail-tax" readonly></label>
+                                        <label>Email<input id="nogna-detail-email" readonly></label>
+                                        <label>Phone<input id="nogna-detail-phone" readonly></label>
+                                        <label>City<input id="nogna-detail-city" readonly></label>
+                                        <label>Notes<textarea id="nogna-detail-notes" rows="4" readonly></textarea></label>
+                                    </div>
+                                </div>
+                            </main>
                         </div>
                     </section>
                 </main>
