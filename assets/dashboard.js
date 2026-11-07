@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const state = { companyId: null, customers: [], editingId: null };
+  const state = { companyId: null, customers: [], editingId: null, onboardingStep: 'welcome' };
   const config = window.NognaDashboard || {};
   const $ = (selector) => document.querySelector(selector);
   const cacheKey = (name, id) => 'nogna:' + name + ':' + (id || 'all');
@@ -17,6 +17,20 @@
     if (!response.ok) throw new Error(body.message || 'Request failed.');
     return body;
   });
+
+  function showOnboarding(step) {
+    state.onboardingStep = step;
+    document.querySelectorAll('[data-onboarding-step]').forEach((item) => item.classList.toggle('is-active', item.dataset.onboardingStep === step));
+    const order = ['welcome', 'identity', 'contact'];
+    const index = order.indexOf(step);
+    document.querySelectorAll('.nogna-progress i').forEach((dot, position) => dot.classList.toggle('is-active', position <= index));
+    $('#nogna-dashboard').classList.add('onboarding-active');
+  }
+
+  function hideOnboarding() {
+    $('#nogna-dashboard').classList.remove('onboarding-active');
+    $('#nogna-onboarding').classList.add('is-complete');
+  }
 
   function notice(message, type) {
     const element = $('#nogna-notice');
@@ -68,6 +82,8 @@
   }
 
   function applyCompanies(companies) {
+    if (!companies.length) { showOnboarding('welcome'); return; }
+    hideOnboarding();
     const select = $('#nogna-company-select');
     select.innerHTML = companies.map((company) => '<option value="' + company.id + '">' + escapeHtml(company.name) + '</option>').join('');
     if (!companies.length) {
@@ -136,6 +152,20 @@
   document.addEventListener('click', async (event) => {
     const sectionButton = event.target.closest('[data-section]');
     if (sectionButton && !sectionButton.disabled) showSection(sectionButton.dataset.section);
+    if (event.target.closest('[data-start-onboarding]')) showOnboarding('identity');
+    if (event.target.closest('[data-onboarding-back]')) showOnboarding(state.onboardingStep === 'contact' ? 'identity' : 'welcome');
+    if (event.target.closest('[data-onboarding-next]')) {
+      if (state.onboardingStep === 'welcome') showOnboarding('identity');
+      else if (state.onboardingStep === 'identity') {
+        if (!$('#nogna-onboarding-name').value.trim()) return notice('Enter your company name.', 'error');
+        showOnboarding('contact');
+      } else {
+        const name = $('#nogna-onboarding-name').value.trim();
+        const email = $('#nogna-contact-email').value.trim();
+        api('/companies', { method: 'POST', body: JSON.stringify({ name, email, base_currency: 'TZS', timezone: 'Africa/Dar_es_Salaam' }) }).then(() => { localStorage.removeItem(cacheKey('companies')); notice('Workspace created.', 'success'); loadCompanies(); }).catch((error) => notice(error.message, 'error'));
+      }
+    }
+    if (event.target.closest('[data-skip-onboarding]')) showOnboarding('identity');
     if (event.target.closest('[data-open-company]')) openCompany();
     if (event.target.closest('[data-close-company]')) closeCompany();
     if (event.target.closest('[data-open-customer]')) openCustomer();
