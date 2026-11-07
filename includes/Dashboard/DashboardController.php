@@ -56,7 +56,7 @@ final class DashboardController
                 <div class="nogna-topbar-actions">
                     <label class="nogna-company-picker">
                         <span>Workspace</span>
-                        <select id="nogna-company-select" aria-label="Select workspace"></select>
+                        <select id="nogna-company-select" aria-label="Select workspace"></select><button class="nogna-inline-action" data-open-company>+ Workspace</button>
                     </label>
                     <span class="nogna-user-pill"><?php echo esc_html(wp_get_current_user()->display_name); ?></span>
                 </div>
@@ -83,7 +83,7 @@ final class DashboardController
                                 <p class="nogna-muted">Your financial workspace</p>
                                 <h2>Good to see you.</h2>
                             </div>
-                            <button class="nogna-button" data-open-customer>+ Add customer</button>
+                            <button class="nogna-button" data-open-company>+ Create workspace</button><button class="nogna-button" data-open-customer>+ Add customer</button>
                         </div>
                         <div class="nogna-stat-grid">
                             <article class="nogna-stat-card"><span>Revenue</span><strong>—</strong><small>Invoices will appear here</small></article>
@@ -115,6 +115,24 @@ final class DashboardController
                         </div>
                     </section>
                 </main>
+            </div>
+
+            <div id="nogna-company-modal" class="nogna-modal" aria-hidden="true">
+                <div class="nogna-modal-backdrop" data-close-company></div>
+                <div class="nogna-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="nogna-company-modal-title">
+                    <button class="nogna-modal-close" data-close-company aria-label="Close">×</button>
+                    <p class="nogna-muted">Workspace setup</p>
+                    <h2 id="nogna-company-modal-title">Create workspace</h2>
+                    <form id="nogna-company-form">
+                        <label>Company name<input name="name" required maxlength="190" placeholder="e.g. KAVS Group" /></label>
+                        <label>Workspace slug<input name="slug" maxlength="190" placeholder="e.g. kavs-group" /></label>
+                        <div class="nogna-form-row">
+                            <label>Currency<input name="base_currency" value="TZS" maxlength="3" /></label>
+                            <label>Timezone<input name="timezone" value="Africa/Dar_es_Salaam" /></label>
+                        </div>
+                        <div class="nogna-modal-actions"><button type="button" class="nogna-button nogna-button-light" data-close-company>Cancel</button><button class="nogna-button" type="submit">Create workspace</button></div>
+                    </form>
+                </div>
             </div>
 
             <div id="nogna-customer-modal" class="nogna-modal" aria-hidden="true">
