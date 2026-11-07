@@ -165,7 +165,6 @@
         api('/companies', { method: 'POST', body: JSON.stringify({ name, email, base_currency: 'TZS', timezone: 'Africa/Dar_es_Salaam' }) }).then(() => { localStorage.removeItem(cacheKey('companies')); notice('Workspace created.', 'success'); loadCompanies(); }).catch((error) => notice(error.message, 'error'));
       }
     }
-    if (event.target.closest('[data-skip-onboarding]')) showOnboarding('identity');
     if (event.target.closest('[data-open-company]')) openCompany();
     if (event.target.closest('[data-close-company]')) closeCompany();
     if (event.target.closest('[data-open-customer]')) openCustomer();
