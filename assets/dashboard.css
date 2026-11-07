@@ -41,3 +41,33 @@ html,body{margin:0!important;padding:0!important;background:#f7f9f7!important}.n
   .nogna-mobile-nav .nogna-mobile-add span{font-size:26px}
   .nogna-table-card{overflow-x:auto}.nogna-table-card table{min-width:650px}
 }
+
+/* Typography and navigation refinement */
+.nogna-dashboard{font-size:15px;line-height:1.45;letter-spacing:0}
+.nogna-topbar{height:76px;padding:15px 30px}
+.nogna-topbar h1{font-size:20px;font-weight:500;letter-spacing:-.025em}
+.nogna-eyebrow{font-size:11px;letter-spacing:.16em}
+.nogna-sidebar{position:relative;display:flex;flex-direction:column;width:230px;padding:24px 10px}
+.nogna-sidebar nav{display:flex;flex-direction:column;gap:4px}
+.nogna-nav-label{font-size:11px;letter-spacing:.1em;color:#858585;margin:25px 14px 8px;font-weight:600}
+.nogna-nav-group{display:grid;gap:3px}
+.nogna-sidebar button{display:flex;align-items:center;gap:11px;font-size:14px;line-height:1.3;padding:12px 14px}
+.nogna-nav-icon{width:18px;text-align:center;color:#aaa;font-size:17px}
+.nogna-sidebar button.is-active .nogna-nav-icon{color:#68a7ff}
+.nogna-sidebar-company{margin-top:auto;border-top:1px solid #353535;padding:18px 14px 5px;display:grid;gap:3px}
+.nogna-sidebar-company strong{font-size:14px;color:#eee;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nogna-sidebar-company span{font-size:12px;color:#888}
+.nogna-content{padding:38px 42px}
+.nogna-welcome h2,.nogna-page-heading h2{font-size:32px;line-height:1.15;font-weight:500}
+.nogna-muted{font-size:14px}
+.nogna-stat-card{min-height:145px;padding:21px}
+.nogna-stat-card span{font-size:14px}.nogna-stat-card strong{font-size:30px}
+.nogna-stat-card small{font-size:13px}
+.nogna-empty-card h3{font-size:23px}.nogna-empty-card p{font-size:15px}
+.nogna-button{font-size:14px;padding:13px 19px}
+@media(max-width:760px){
+ .nogna-topbar{height:68px;padding:12px 16px}.nogna-topbar h1{font-size:18px}
+ .nogna-sidebar-company{display:none}.nogna-nav-label{font-size:10px}
+ .nogna-content{padding:26px 16px 30px}.nogna-muted{font-size:13px}
+ .nogna-stat-card span{font-size:12px}.nogna-stat-card strong{font-size:22px}.nogna-stat-card small{font-size:11px}
+}
