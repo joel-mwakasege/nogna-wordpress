@@ -2,7 +2,7 @@
 Contributors: joel-mwakasege
 Requires at least: 6.4
 Requires PHP: 8.1
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 License: GPL-2.0-or-later
 
 Native WordPress billing and financial management application based on Nogna.
