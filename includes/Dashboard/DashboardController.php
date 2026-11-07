@@ -124,12 +124,18 @@ final class DashboardController
                 <aside class="nogna-sidebar">
                     <div class="nogna-brand">nogna<span>.</span></div>
                     <nav>
-                        <button class="is-active" data-section="overview">Overview</button>
-                        <button data-section="customers">Customers</button>
-                        <button data-section="invoices" disabled>Invoices <small>soon</small></button>
-                        <button data-section="expenses" disabled>Expenses <small>soon</small></button>
-                        <button data-section="reports" disabled>Reports <small>soon</small></button>
+                        <div class="nogna-nav-group">
+                            <button class="is-active" data-section="overview"><span class="nogna-nav-icon">⌂</span>Home</button>
+                        </div>
+                        <div class="nogna-nav-label">MASTER DATA</div>
+                        <div class="nogna-nav-group">
+                            <button data-section="customers"><span class="nogna-nav-icon">◎</span>Customers</button>
+                        </div>
                     </nav>
+                    <div class="nogna-sidebar-company">
+                        <strong><?php echo esc_html(wp_get_current_user()->display_name); ?></strong>
+                        <span>Current workspace</span>
+                    </div>
                 </aside>
 
                 <main class="nogna-content">
