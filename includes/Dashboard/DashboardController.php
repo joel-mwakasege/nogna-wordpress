@@ -110,11 +110,8 @@ final class DashboardController
                     <h1>Overview</h1>
                 </div>
                 <div class="nogna-topbar-actions">
-                    <label class="nogna-company-picker">
-                        <span>Workspace</span>
-                        <select id="nogna-company-select" aria-label="Select workspace"></select><button class="nogna-inline-action" data-open-company>+ Workspace</button>
-                    </label>
-                    <span class="nogna-user-pill"><?php echo esc_html(wp_get_current_user()->display_name); ?></span>
+                    <button class="nogna-topbar-icon" aria-label="Help">?</button>
+                    <button class="nogna-topbar-icon" aria-label="Notifications">♧</button>
                 </div>
             </header>
 
@@ -133,8 +130,17 @@ final class DashboardController
                         </div>
                     </nav>
                     <div class="nogna-sidebar-company">
-                        <strong><?php echo esc_html(wp_get_current_user()->display_name); ?></strong>
-                        <span>Current workspace</span>
+                        <button class="nogna-sidebar-workspace" data-open-company>
+                            <span class="nogna-workspace-avatar">N</span>
+                            <span class="nogna-sidebar-workspace-text"><small>Workspace</small><strong id="nogna-active-workspace">Select workspace</strong></span>
+                            <span class="nogna-sidebar-chevron">⌄</span>
+                        </button>
+                        <div class="nogna-sidebar-account-row">
+                            <button data-open-company class="nogna-settings-button">⚙ <span>Settings</span></button>
+                            <span class="nogna-account-status" aria-label="Connected"></span>
+                            <button class="nogna-profile-button" aria-label="Profile">♙</button>
+                        </div>
+                        <select id="nogna-company-select" class="nogna-hidden-select" aria-label="Select workspace"></select>
                     </div>
                 </aside>
 
