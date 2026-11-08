@@ -127,6 +127,7 @@ final class DashboardController
                         <div class="nogna-nav-label">MASTER DATA</div>
                         <div class="nogna-nav-group">
                             <button data-section="customers"><span class="nogna-nav-icon">◎</span>Customers</button>
+                            <button data-section="company"><span class="nogna-nav-icon">▣</span>My Company</button>
                         </div>
                     </nav>
                     <div class="nogna-sidebar-company">
@@ -151,7 +152,6 @@ final class DashboardController
                                 <h2>Good to see you</h2>
                                 <p><?php echo esc_html(wp_date('l, F j')); ?> <span class="nogna-status-dot"></span> Personal workspace</p>
                             </div>
-                            <button class="nogna-workspace-chip" data-open-company><span class="nogna-workspace-avatar">N</span><span><small>Workspace</small><strong id="nogna-active-workspace">Select workspace</strong></span><span>⌄</span></button>
                         </div>
                         <div class="nogna-period-row">
                             <div class="nogna-period-tabs"><button class="is-active">1M</button><button class="is-active">3M</button><button>6M</button><button>1Y</button><button>All</button></div>
@@ -197,6 +197,29 @@ final class DashboardController
                                         <label>Phone<input id="nogna-detail-phone" readonly></label>
                                         <label>City<input id="nogna-detail-city" readonly></label>
                                         <label>Notes<textarea id="nogna-detail-notes" rows="4" readonly></textarea></label>
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    </section>
+                    <section id="nogna-section-company" class="nogna-section">
+                        <div class="nogna-company-layout">
+                            <aside class="nogna-company-list">
+                                <div class="nogna-record-list-heading"><span>MY COMPANIES</span></div>
+                                <div id="nogna-company-items" class="nogna-company-items"></div>
+                                <button class="nogna-create-record" data-open-company>＋ <span>Create company</span></button>
+                            </aside>
+                            <main class="nogna-company-detail">
+                                <div class="nogna-company-detail-header">
+                                    <div><span class="nogna-detail-avatar">N</span><div><h2 id="nogna-company-detail-name">My Company</h2><p>Active profile</p></div></div>
+                                </div>
+                                <nav class="nogna-detail-tabs"><button class="is-active">Company</button><button disabled>Address</button><button disabled>Contact</button><button disabled>History</button></nav>
+                                <div class="nogna-company-form-preview">
+                                    <div class="nogna-detail-grid">
+                                        <label>Company name<input id="nogna-company-name-preview" readonly></label>
+                                        <label>Base currency<input id="nogna-company-currency-preview" readonly></label>
+                                        <label>Timezone<input id="nogna-company-timezone-preview" readonly></label>
+                                        <label>Owner<input value="<?php echo esc_attr(wp_get_current_user()->display_name); ?>" readonly></label>
                                     </div>
                                 </div>
                             </main>
