@@ -99,6 +99,8 @@
     hideOnboarding();
     const select = $('#nogna-company-select');
     select.innerHTML = companies.map((company) => '<option value="' + company.id + '">' + escapeHtml(company.name) + '</option>').join('');
+    const companyItems = $('#nogna-company-items');
+    if (companyItems) companyItems.innerHTML = companies.map((company, index) => '<button class="nogna-company-item' + (index === 0 ? ' is-selected' : '') + '"><span class="nogna-workspace-avatar">N</span><span><strong>' + escapeHtml(company.name) + '</strong><small>' + escapeHtml(company.timezone || 'Workspace') + '</small></span><b>⋮</b></button>').join('');
     if (!companies.length) {
       select.innerHTML = '<option value="">No workspace</option>';
       notice('Create a company workspace before adding customers.', 'error');
@@ -108,6 +110,14 @@
     select.value = state.companyId;
     const activeWorkspace = $('#nogna-active-workspace');
     if (activeWorkspace) activeWorkspace.textContent = companies[0].name;
+    const detailName = $('#nogna-company-detail-name');
+    if (detailName) detailName.textContent = companies[0].name;
+    const previewName = $('#nogna-company-name-preview');
+    if (previewName) previewName.value = companies[0].name;
+    const previewCurrency = $('#nogna-company-currency-preview');
+    if (previewCurrency) previewCurrency.value = companies[0].base_currency || '';
+    const previewTimezone = $('#nogna-company-timezone-preview');
+    if (previewTimezone) previewTimezone.value = companies[0].timezone || ''; 
     loadCustomers();
   }
 
