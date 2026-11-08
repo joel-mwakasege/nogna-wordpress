@@ -131,7 +131,7 @@ final class DashboardController
                         </div>
                     </nav>
                     <div class="nogna-sidebar-company">
-                        <button class="nogna-sidebar-workspace" data-open-company>
+                        <button class="nogna-sidebar-workspace" data-section="company">
                             <span class="nogna-workspace-avatar">N</span>
                             <span class="nogna-sidebar-workspace-text"><small>Workspace</small><strong id="nogna-active-workspace">Select workspace</strong></span>
                             <span class="nogna-sidebar-chevron">⌄</span>
