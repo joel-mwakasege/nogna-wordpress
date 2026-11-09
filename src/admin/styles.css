@@ -200,3 +200,25 @@ html, body { overflow:hidden; }
 .nogna-logo-picker button:hover{background:#3b3b3b}
 .nogna-logo img{width:28px;height:28px;object-fit:contain;border-radius:7px}
 @media(max-width:760px){.nogna-logo-picker{display:grid}.nogna-logo-picker button{height:38px}}
+
+
+.nogna-customer-view{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:calc(100vh - 132px);overflow:hidden;border:1px solid #333;border-radius:10px;background:#1b1b1b}
+.nogna-customer-list{display:flex;flex-direction:column;min-width:0;border-right:1px solid #353535}
+.nogna-list-title{display:flex;justify-content:space-between;align-items:center}
+.nogna-list-add{border:0;background:transparent;color:#aaa;font-size:20px}
+.nogna-customer-search{margin:0 14px 13px;padding:10px 11px;border:1px solid #393939;border-radius:7px;background:#242424;color:#eee}
+.nogna-customer-rows{flex:1;overflow:auto}
+.nogna-customer-row{display:flex;align-items:center;gap:11px;width:100%;padding:15px;border:0;border-left:3px solid transparent;background:transparent;color:#eee;text-align:left}
+.nogna-customer-row:hover,.nogna-customer-row.is-selected{background:#303030}
+.nogna-customer-row.is-selected{border-left-color:#4c91f2}
+.nogna-customer-row>span:nth-child(2){min-width:0;flex:1}
+.nogna-customer-row strong,.nogna-customer-row small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nogna-customer-row small{margin-top:3px;color:#999;font-size:12px}
+.nogna-customer-detail{min-width:0}
+.nogna-customer-form{max-width:620px;padding:28px 25px}
+.nogna-customer-form h1{margin:0 0 24px;font-size:24px;font-weight:500}
+.nogna-customer-form .nogna-field{margin-bottom:16px}
+.nogna-customer-form textarea,.nogna-field textarea{padding:11px;border:1px solid #3f3f3f;border-radius:7px;background:#242424;color:#eee;resize:vertical}
+.nogna-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.nogna-secondary-button{padding:11px 16px;border:1px solid #444;border-radius:8px;background:#292929;color:#eee}
+@media(max-width:760px){.nogna-customer-view{display:block;min-height:0}.nogna-customer-list{max-height:330px;border-right:0}.nogna-customer-detail{border-top:1px solid #353535}.nogna-customer-form{padding:20px 17px}}
