@@ -46,6 +46,43 @@ final class CompanyController
         ]);
     }
 
+    public function update(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $company_id = (int) $request['id'];
+        $name = trim((string) $request->get_param('name'));
+        $slug = sanitize_title((string) ($request->get_param('slug') ?: $name));
+        $currency = strtoupper(trim((string) ($request->get_param('base_currency') ?: 'USD')));
+        $timezone = trim((string) ($request->get_param('timezone') ?: 'UTC'));
+
+        if ($name === '' || !preg_match('/^[A-Z]{3}$/', $currency)) {
+            return new \WP_REST_Response(['code' => 'nogna_validation_failed', 'message' => 'Company name and currency are required.'], 400);
+        }
+
+        try {
+            new \DateTimeZone($timezone);
+        } catch (\Exception $exception) {
+            return new \WP_REST_Response(['code' => 'nogna_validation_failed', 'message' => 'Timezone is invalid.'], 400);
+        }
+
+        $updated = (new CompanyRepository())->update($company_id, [
+            'name' => sanitize_text_field($name),
+            'slug' => $slug,
+            'base_currency' => $currency,
+            'timezone' => sanitize_text_field($timezone),
+        ]);
+
+        if (!$updated) {
+            return new \WP_REST_Response(['code' => 'nogna_record_not_found', 'message' => 'Company not found.'], 404);
+        }
+
+        return new \WP_REST_Response(['data' => ['id'=>$company_id,'name'=>$name,'slug'=>$slug,'base_currency'=>$currency,'timezone'=>$timezone]]);
+    }
+
+    public function can_manage(\WP_REST_Request $request): bool
+    {
+        return is_user_logged_in() && (new CompanyRepository())->user_has_access((int) $request['id'], (int) get_current_user_id());
+    }
+
     public function index(\WP_REST_Request $request): \WP_REST_Response
     {
         $companies = (new CompanyRepository())->find_for_user((int) get_current_user_id());
