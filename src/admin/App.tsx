@@ -163,7 +163,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
       <div><p className="nogna-home-eyebrow">INCOME / NEW DOCUMENT</p><h1>{draft.document_type==='quote'?'Quote':'Invoice'} {draft.document_number&&'· '+draft.document_number}</h1></div>
       <div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
     </div>
-    {message&&<div className="nogna-customer-notice is-success">{message}</div>}
+    {message&&<div className={"nogna-customer-notice "+(/saved/i.test(message) ? "is-success" : "is-error")}>{message}</div>}
     <div className="nogna-settings-card">
       <h2>Document details</h2>
       <p className="nogna-settings-help">Choose who this document is for and set its basic billing information.</p>
@@ -216,6 +216,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
       </section>;
     })}
     <button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
+    <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
 
   return <div className="nogna-invoice-list"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">INCOME</p><h1>Invoices</h1></div><button className="nogna-save-button" onClick={start}>＋ New invoice</button></div>{message&&<div className="nogna-customer-notice is-error">{message}</div>}<div className="nogna-settings-card nogna-invoice-table">{invoices.length?<>{invoices.map(inv=><button className="nogna-invoice-row" key={inv.id} onClick={()=>{setDraft({...inv,sections:inv.sections||[emptySection()]});setEditing(inv)}}><span><strong>{inv.invoice_number}</strong><small>{inv.customer_name||'No customer'}</small></span><span>{inv.currency} {Number(inv.total||0).toFixed(2)}</span><em>{inv.status}</em></button>)}</>:<div className="nogna-empty-state"><p>No invoices yet. Create the first draft from this screen.</p></div>}</div></div>;
