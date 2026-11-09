@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --nogna-font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --nogna-font-size-base: 14px;
+  --nogna-icon-size-sm: 16px;
+  --nogna-icon-size-md: 20px;
+  --nogna-icon-size-lg: 24px;
+  --nogna-icon-stroke: 1.8;
+  --nogna-canvas: #181818;
+  --nogna-sidebar: #1c1c1c;
+  --nogna-panel: #222222;
+  --nogna-elevated: #2b2b2b;
+  --nogna-border: #363636;
+  --nogna-text: #f1f1f1;
+  --nogna-muted: #999999;
+  --nogna-accent: #559cf0;
+  --nogna-success: #35b97b;
+  --nogna-radius: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body, #nogna-react-root { margin: 0; min-height: 100%; }
+body { font-family: var(--nogna-font-family); font-size: var(--nogna-font-size-base); background: var(--nogna-canvas); color: var(--nogna-text); }
+.nogna-react-foundation { min-height: 100vh; display: grid; place-items: center; color: var(--nogna-muted); }
