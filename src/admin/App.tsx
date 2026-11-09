@@ -147,13 +147,19 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const save=()=>{if(!company||!draft.customer_id){setMessage('Select a customer before saving.');return;}const path=editing?.new?'/companies/'+company.id+'/invoices':'/companies/'+company.id+'/invoices/'+editing.id;api(path,{method:editing?.new?'POST':'PUT',body:JSON.stringify(draft)}).then(r=>{setEditing(r.data);setDraft(r.data);setMessage('Draft saved');load()}).catch(e=>setMessage(e.message));};
   const updateSection=(si:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i===si?{...s,[key]:value}:s)});
   const updateItem=(si:number,ii:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i!==si?s:{...s,items:s.items.map((x:any,j:number)=>j===ii?{...x,[key]:value}:x)})});
-  const sectionSubtotal=(s:any)=>s.items.reduce((sum:number,x:any)=>sum+(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0),0);
+  const isOwner=(item:any)=>item.is_group_parent===true || Number(item.is_group_parent)===1;
+  const sectionSubtotal=(s:any)=>{const groups:any={};let total=0;s.items.forEach((x:any)=>{if(x.group_id && isOwner(x)) groups[x.group_id]=x;});s.items.forEach((x:any)=>{if(x.group_id && groups[x.group_id]) return;total+=(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);});Object.values(groups).forEach((x:any)=>{total+=(Number(x.days)||0)*(Number(x.unit_cost)||0);});return total;};
   const showUnits=appearance.invoice_show_units !== '0';
   const showDays=appearance.invoice_show_days !== '0';
   const showAmount=appearance.invoice_show_unit_amount !== '0';
   const unitsLabel=appearance.invoice_units_label || 'Units';
   const daysLabel=appearance.invoice_days_label || 'Days';
   const amountLabel=appearance.invoice_unit_amount_label || 'Unit amount';
+  const baseSubtotal=draft.sections.reduce((sum:number,s:any)=>sum+sectionSubtotal(s)*(Number(s.units_multiplier)||1),0);
+  const discountTotal=baseSubtotal*(Number(draft.discount_percent)||0)/100;
+  const taxableTotal=baseSubtotal-discountTotal;
+  const taxTotal=taxableTotal*(Number(draft.tax_percent)||0)/100;
+  const grandTotal=taxableTotal+taxTotal;
   const money=(value:number)=>`${draft.currency||company?.base_currency||'USD'} ${value.toFixed(2)}`;
 
   if(!company)return <div className="nogna-placeholder"><h1>Invoices</h1><p>Create a workspace before creating invoices.</p></div>;
@@ -194,7 +200,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
         <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span className={showUnits ? "" : "is-hidden"}>{unitsLabel}</span><span className={showDays ? "" : "is-hidden"}>{daysLabel}</span><span className={showAmount ? "" : "is-hidden"}>{amountLabel}</span><span>Group</span><span>Line total</span><span></span></div>
         {s.items.map((x:any,ii:number)=>{
           const groupItems=x.group_id ? s.items.filter((item:any)=>item.group_id===x.group_id) : [];
-          const owner=groupItems.find((item:any)=>item.is_group_parent);
+          const owner=groupItems.find((item:any)=>isOwner(item));
           const grouped=Boolean(x.group_id && owner);
           const sharedDays=grouped ? Number(owner.days)||0 : Number(x.days)||0;
           const sharedAmount=grouped ? Number(owner.unit_cost)||0 : Number(x.unit_cost)||0;
@@ -206,7 +212,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
             <label className={showUnits ? "" : "is-hidden"}><span>{unitsLabel}</span><input type="number" min="0" step="0.01" value={x.units ?? 1} onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/></label>
             <label className={showDays ? "" : "is-hidden"}><span>{daysLabel}{grouped ? ' (shared)' : ''}</span><input type="number" min="0" step="1" inputMode="numeric" value={sharedDays} disabled={grouped && !controlsShared} title={grouped && !controlsShared ? 'Controlled by the cost owner' : undefined} onChange={e=>updateItem(si,ii,'days',Math.max(0,parseInt(e.target.value,10)||0))}/></label>
             <label className={showAmount ? "" : "is-hidden"}><span>{amountLabel}{grouped ? ' (shared)' : ''}</span><input type="number" min="0" step="0.01" value={sharedAmount} disabled={grouped && !controlsShared} title={grouped && !controlsShared ? 'Controlled by the cost owner' : undefined} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
-            <label><span>Group name</span><input value={x.group_id||''} placeholder="Optional" onChange={e=>updateItem(si,ii,'group_id',e.target.value)}/><small><input type="checkbox" checked={!!x.is_group_parent} onChange={e=>updateItem(si,ii,'is_group_parent',e.target.checked)}/> Cost owner</small></label>
+            <label><span>Group name</span><input value={x.group_id||''} placeholder="Optional" onChange={e=>updateItem(si,ii,'group_id',e.target.value)}/><small><input type="checkbox" checked={isOwner(x)} onChange={e=>updateItem(si,ii,'is_group_parent',e.target.checked)}/> Cost owner</small></label>
             <strong className="nogna-line-total">{money(line)}</strong>
             <button className="nogna-secondary-button" aria-label="Remove item" onClick={()=>updateSection(si,'items',s.items.filter((_:any,j:number)=>j!==ii))}>×</button>
           </div>;
@@ -216,6 +222,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
       </section>;
     })}
     <button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
+    <div className="nogna-invoice-totals"><div><span>Subtotal</span><strong>{money(baseSubtotal)}</strong></div><div><span>Discount</span><strong>- {money(discountTotal)}</strong></div><div><span>Tax</span><strong>{money(taxTotal)}</strong></div><div className="is-grand-total"><span>Grand total</span><strong>{money(grandTotal)}</strong></div></div>
     <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
 
