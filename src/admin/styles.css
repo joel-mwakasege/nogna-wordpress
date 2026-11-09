@@ -405,3 +405,18 @@ html,body{overflow-x:hidden}
  .nogna-invoice-line label:first-child,.nogna-invoice-line label:nth-child(5){grid-column:1/-1}
  .nogna-invoice-line .nogna-line-total{grid-column:auto}
 }
+
+/* Invoice form alignment */
+.nogna-invoice-editor .nogna-settings-grid{align-items:start}
+.nogna-invoice-editor .nogna-field{min-width:0;align-content:start}
+.nogna-invoice-editor .nogna-field>span{min-height:17px;line-height:17px}
+.nogna-invoice-editor .nogna-field input,
+.nogna-invoice-editor .nogna-field select{height:40px;box-sizing:border-box}
+.nogna-invoice-line{align-items:start}
+.nogna-invoice-line label{min-width:0;align-content:start}
+.nogna-invoice-line label>span{min-height:16px;line-height:16px}
+.nogna-invoice-line input{height:40px;box-sizing:border-box}
+.nogna-invoice-line label small{min-height:15px;line-height:15px}
+.nogna-line-total{height:40px;display:flex;align-items:center;box-sizing:border-box}
+.nogna-invoice-section .nogna-panel-heading{align-items:flex-start}
+.nogna-invoice-section .nogna-panel-heading h2{margin-bottom:0}
