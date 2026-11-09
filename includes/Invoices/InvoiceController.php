@@ -69,6 +69,11 @@ final class InvoiceController
         if (!$this->load($company,$id)) return $this->error('Document not found.',404);
         $allowed=['customer_id','document_type','issue_date','due_date','currency','administrative_notes','discount_percent','tax_percent','status'];
         $data=[]; foreach($allowed as $key){ if($request->get_param($key)!==null) $data[$key]=$key==='customer_id'?(int)$request->get_param($key):sanitize_text_field((string)$request->get_param($key)); }
+        $data['discount_percent'] = isset($data['discount_percent']) ? max(0, min(100, (int) round((float) $data['discount_percent'])) ) : null;
+        $data['tax_percent'] = isset($data['tax_percent']) ? max(0, min(100, (int) round((float) $data['tax_percent'])) ) : null;
+        unset($data['discount_percent'], $data['tax_percent']);
+        if ($request->get_param('discount_percent') !== null) $data['discount_percent'] = max(0, min(100, (int) round((float) $request->get_param('discount_percent'))));
+        if ($request->get_param('tax_percent') !== null) $data['tax_percent'] = max(0, min(100, (int) round((float) $request->get_param('tax_percent'))));
         $data['updated_at']=current_time('mysql');
         if ($data) $wpdb->update($wpdb->prefix.'nogna_invoices',$data,['id'=>$id,'company_id'=>$company]);
         $saved = $this->save_document($id,$request);
