@@ -144,6 +144,7 @@ final class MigrationRunner
             units decimal(20,6) NOT NULL DEFAULT 1,
             days decimal(20,6) NOT NULL DEFAULT 1,
             unit_price decimal(20,6) NOT NULL DEFAULT 0,
+            unit_cost decimal(20,6) NOT NULL DEFAULT 0,
             discount_amount decimal(20,6) NOT NULL DEFAULT 0,
             tax_rate decimal(10,6) NOT NULL DEFAULT 0,
             tax_amount decimal(20,6) NOT NULL DEFAULT 0,
