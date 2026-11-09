@@ -4,11 +4,6 @@
 
 :root {
   --nogna-font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --nogna-font-size-base: 14px;
-  --nogna-icon-size-sm: 16px;
-  --nogna-icon-size-md: 20px;
-  --nogna-icon-size-lg: 24px;
-  --nogna-icon-stroke: 1.8;
   --nogna-canvas: #181818;
   --nogna-sidebar: #1c1c1c;
   --nogna-panel: #222222;
@@ -23,5 +18,79 @@
 
 * { box-sizing: border-box; }
 html, body, #nogna-react-root { margin: 0; min-height: 100%; }
-body { font-family: var(--nogna-font-family); font-size: var(--nogna-font-size-base); background: var(--nogna-canvas); color: var(--nogna-text); }
-.nogna-react-foundation { min-height: 100vh; display: grid; place-items: center; color: var(--nogna-muted); }
+body { background: var(--nogna-canvas); color: var(--nogna-text); font-family: var(--nogna-font-family); font-size: 14px; }
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+
+.nogna-app { min-height: 100vh; background: var(--nogna-canvas); color: var(--nogna-text); }
+.nogna-app-header { height: 64px; display:flex; align-items:center; justify-content:space-between; padding:0 28px; border-bottom:1px solid #303030; background:#1b1b1b; }
+.nogna-breadcrumb { display:flex; align-items:center; gap:10px; font-size:15px; color:#e8e8e8; }
+.nogna-back { color:#858585; font-size:22px; line-height:1; }
+.nogna-header-actions { display:flex; align-items:center; gap:18px; color:#999; }
+.nogna-app-body { min-height:calc(100vh - 64px); display:flex; }
+.nogna-app-sidebar { width:230px; flex:0 0 230px; display:flex; flex-direction:column; padding:22px 10px 12px; background:var(--nogna-sidebar); border-right:1px solid #2e2e2e; }
+.nogna-logo { display:flex; align-items:center; gap:9px; padding:0 14px 32px; color:#f3f3f3; font-size:18px; font-weight:600; letter-spacing:-.04em; }
+.nogna-logo > span { width:28px; height:28px; display:grid; place-items:center; border-radius:7px; background:#4d8ff0; color:#fff; font-size:17px; }
+.nogna-logo small { display:block; color:#559cf0; font-size:10px; font-weight:500; letter-spacing:0; }
+.nogna-app-sidebar > button, .nogna-app-sidebar > div > button { display:flex; align-items:center; gap:11px; width:100%; padding:11px 14px; border:0; border-radius:8px; background:transparent; color:#aaa; text-align:left; }
+.nogna-app-sidebar > button:hover, .nogna-app-sidebar > div > button:hover, .nogna-app-sidebar button.is-active { background:#353535; color:#fff; }
+.nogna-sidebar-label { margin:25px 14px 8px; color:#858585; font-size:11px; font-weight:600; letter-spacing:.1em; }
+.nogna-company-account { margin-top:auto; padding-top:14px; border-top:1px solid #353535; }
+.nogna-company-switcher { background:#252525!important; border:1px solid #3b3b3b!important; }
+.nogna-company-avatar { width:30px; height:30px; display:grid; place-items:center; flex:0 0 auto; border-radius:8px; background:#d7bd8b; color:#28221a; font-weight:700; }
+.nogna-company-switcher > span:nth-child(2) { min-width:0; flex:1; }
+.nogna-company-switcher small, .nogna-company-switcher strong { display:block; }
+.nogna-company-switcher small { color:#929292; font-size:10px; }
+.nogna-company-switcher strong { overflow:hidden; color:#eee; font-size:13px; font-weight:500; text-overflow:ellipsis; white-space:nowrap; }
+.nogna-account-actions { display:flex; gap:8px; align-items:center; margin-top:4px; }
+.nogna-account-actions button { flex:1; }
+.nogna-app-main { min-width:0; flex:1; padding:34px 40px; }
+.nogna-page-heading { margin-bottom:22px; }
+.nogna-page-heading h1, .nogna-page-heading h2 { margin:0; font-size:30px; font-weight:500; letter-spacing:-.04em; }
+.nogna-page-heading p { margin:7px 0 0; color:#8e8e8e; }
+.nogna-company-layout { display:grid; grid-template-columns:290px minmax(0,1fr); min-height:calc(100vh - 160px); overflow:hidden; border:1px solid #333; border-radius:10px; background:#1b1b1b; }
+.nogna-company-list { display:flex; flex-direction:column; min-width:0; border-right:1px solid #353535; }
+.nogna-company-list h3 { margin:22px 18px 15px; color:#aaa; font-size:11px; letter-spacing:.12em; }
+.nogna-company-items { flex:1; }
+.nogna-company-item { display:flex; align-items:center; gap:11px; width:100%; padding:16px 15px; border:0; border-left:3px solid transparent; background:transparent; color:#eee; text-align:left; }
+.nogna-company-item:hover { background:#272727; }
+.nogna-company-item.is-selected { border-left-color:#4c91f2; background:#303030; }
+.nogna-company-item > span:nth-child(2) { min-width:0; flex:1; }
+.nogna-company-item strong, .nogna-company-item small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.nogna-company-item strong { font-size:14px; font-weight:600; }
+.nogna-company-item small { margin-top:3px; color:#999; font-size:12px; }
+.nogna-create-company { padding:18px; border:0; border-top:1px solid #353535; background:transparent; color:#ddd; text-align:left; }
+.nogna-create-company:hover { background:#272727; }
+.nogna-company-detail { min-width:0; }
+.nogna-company-detail-header { display:flex; align-items:center; gap:12px; padding:21px 25px 15px; border-bottom:1px solid #353535; }
+.nogna-company-detail-header h2 { margin:0; font-size:18px; font-weight:600; }
+.nogna-company-detail-header p { margin:4px 0 0; color:#4d9cf3; font-size:13px; }
+.nogna-detail-avatar { width:38px; height:38px; display:grid; place-items:center; border-radius:8px; background:#d7bd8b; color:#28221a; font-weight:700; }
+.nogna-detail-tabs { display:flex; gap:27px; padding:0 25px; border-bottom:1px solid #353535; }
+.nogna-detail-tabs button { padding:14px 0 12px; border:0; border-bottom:2px solid transparent; background:transparent; color:#999; }
+.nogna-detail-tabs button.is-active { border-bottom-color:#4c91f2; color:#eee; }
+.nogna-detail-tabs button:disabled { color:#666; cursor:default; }
+.nogna-company-form { padding:27px 25px; max-width:900px; }
+.nogna-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px 14px; }
+.nogna-form-grid label { display:grid; gap:7px; color:#999; font-size:12px; }
+.nogna-form-grid input, .nogna-form-grid select { width:100%; padding:11px; border:1px solid #3f3f3f; border-radius:7px; background:#242424; color:#eee; }
+.nogna-empty-state { display:grid; place-items:center; min-height:300px; color:#888; text-align:center; }
+.nogna-mobile-nav { display:none; }
+
+@media (max-width:760px) {
+  .nogna-app-header { height:58px; padding:0 16px; }
+  .nogna-app-body { min-height:calc(100vh - 58px); display:block; padding-bottom:72px; }
+  .nogna-app-sidebar { display:none; }
+  .nogna-app-main { padding:24px 16px; }
+  .nogna-page-heading h1, .nogna-page-heading h2 { font-size:25px; }
+  .nogna-company-layout { display:block; min-height:0; }
+  .nogna-company-list { max-height:330px; border-right:0; }
+  .nogna-company-detail { border-top:1px solid #353535; }
+  .nogna-company-detail-header { padding:17px; }
+  .nogna-detail-tabs { gap:18px; overflow-x:auto; padding:0 17px; }
+  .nogna-company-form { padding:20px 17px; }
+  .nogna-form-grid { grid-template-columns:1fr; }
+  .nogna-mobile-nav { position:fixed; right:0; bottom:0; left:0; z-index:10; display:flex; height:68px; align-items:center; justify-content:space-around; border-top:1px solid #393939; background:#202020; }
+  .nogna-mobile-nav button { border:0; background:transparent; color:#999; font-size:11px; }
+  .nogna-mobile-nav button.is-active { color:#5c9df3; }
+}
