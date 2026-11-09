@@ -426,3 +426,5 @@ html,body{overflow-x:hidden}
 
 .nogna-invoice-line input:disabled{opacity:.62;cursor:not-allowed;background:#1c1c1c}
 .nogna-invoice-line.is-grouped{padding-left:10px;border-left:2px solid var(--nogna-accent)}
+
+.nogna-invoice-editor>.nogna-customer-notice{margin:0 0 20px}
