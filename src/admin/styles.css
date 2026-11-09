@@ -296,3 +296,56 @@ html,body{overflow-x:hidden}
   .nogna-company-title{padding:18px}
   .nogna-tabs{overflow-x:auto;white-space:nowrap}
 }
+
+
+/* Explicit responsive breakpoints */
+@media (max-width:1200px){
+  .nogna-app-main{padding-left:24px;padding-right:24px}
+  .nogna-company-view,.nogna-customer-view{grid-template-columns:250px minmax(0,1fr)}
+  .nogna-company-fields{gap:16px 12px}
+}
+@media (max-width:1024px){
+  .nogna-app-sidebar{width:190px;flex-basis:190px}
+  .nogna-company-view,.nogna-customer-view{grid-template-columns:220px minmax(0,1fr)}
+  .nogna-company-fields{grid-template-columns:1fr}
+  .nogna-company-title,.nogna-company-fields{padding-left:18px;padding-right:18px}
+}
+@media (max-width:900px){
+  .nogna-app-sidebar{width:72px;flex-basis:72px;padding-left:8px;padding-right:8px}
+  .nogna-logo{justify-content:center;padding-left:0;padding-right:0}
+  .nogna-logo>div,.nogna-nav-text,.nogna-sidebar-label{display:none}
+  .nogna-app-sidebar>button{justify-content:center;padding-left:0;padding-right:0}
+  .nogna-company-switcher{justify-content:center;padding-left:0;padding-right:0}
+  .nogna-company-switcher>svg,.nogna-account-tools>svg{display:none}
+  .nogna-account-tools{justify-content:center}
+  .nogna-account-tools button{flex:0 0 auto;padding:8px!important}
+  .nogna-app-main{width:calc(100vw - 72px);padding:18px 14px}
+  .nogna-company-view,.nogna-customer-view{display:block;min-width:0;overflow:hidden}
+  .nogna-company-list,.nogna-customer-list{max-height:250px;border-right:0;border-bottom:1px solid #353535}
+}
+@media (max-width:768px){
+  .nogna-app-header{padding:0 14px}
+  .nogna-header-actions{gap:8px}
+  .nogna-company-fields{grid-template-columns:1fr}
+  .nogna-company-title{padding:16px}
+  .nogna-tabs{gap:18px;padding-left:16px;padding-right:16px;overflow-x:auto}
+}
+@media (max-width:640px){
+  .nogna-app-header{height:56px}
+  .nogna-app-body{height:calc(100% - 56px)}
+  .nogna-app-main{width:100%;padding:16px 10px}
+  .nogna-header-actions{display:none}
+  .nogna-company-list,.nogna-customer-list{max-height:220px}
+  .nogna-company-heading h1{font-size:16px}
+  .nogna-company-heading p{font-size:12px}
+  .nogna-settings-grid{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  .nogna-app-main{padding:12px 7px}
+  .nogna-company-title{padding:14px 12px}
+  .nogna-company-fields{padding:16px 12px}
+  .nogna-company-heading{gap:8px}
+  .nogna-company-avatar.large{width:34px;height:34px}
+  .nogna-customer-actions{display:none}
+  .nogna-settings-card{padding:16px 12px}
+}
