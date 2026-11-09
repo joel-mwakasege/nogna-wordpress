@@ -38,7 +38,7 @@ final class InvoiceController
     {
         global $wpdb;
         $company=(int)$request['company_id']; $customer=(int)$request->get_param('customer_id');
-        if (!$customer || !(new CustomerRepository())->find($company,$customer)) return $this->error('Customer is required.',400);
+        if (!$customer || !(new CustomerRepository())->find($customer,$company)) return $this->error('Customer is required.',400);
         $type=in_array($request->get_param('document_type'),['invoice','quote'],true)?$request->get_param('document_type'):'invoice';
         $currency=strtoupper(sanitize_text_field((string)($request->get_param('currency') ?: 'USD')));
         $date=sanitize_text_field((string)($request->get_param('issue_date') ?: current_time('Y-m-d')));
