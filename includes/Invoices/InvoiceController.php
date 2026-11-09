@@ -80,7 +80,7 @@ final class InvoiceController
         return new \WP_REST_Response(['data'=>['deleted'=>true]]);
     }
 
-    private function save_document(int $invoice_id, \WP_REST_Request $request): void
+    private function save_document(int $invoice_id, \WP_REST_Request $request): bool
     {
         global $wpdb; $sections=$request->get_param('sections');
         if (!is_array($sections)) return true;
