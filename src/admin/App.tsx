@@ -147,7 +147,61 @@ function InvoiceView({company}:{company:Company|null}) {
   const save=()=>{if(!company||!draft.customer_id){setMessage('Select a customer before saving.');return;}const path=editing?.new?'/companies/'+company.id+'/invoices':'/companies/'+company.id+'/invoices/'+editing.id;api(path,{method:editing?.new?'POST':'PUT',body:JSON.stringify(draft)}).then(r=>{setEditing(r.data);setDraft(r.data);setMessage('Draft saved');load()}).catch(e=>setMessage(e.message));};
   const updateSection=(si:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i===si?{...s,[key]:value}:s)});
   const updateItem=(si:number,ii:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i!==si?s:{...s,items:s.items.map((x:any,j:number)=>j===ii?{...x,[key]:value}:x)})});
+  const sectionSubtotal=(s:any)=>s.items.reduce((sum:number,x:any)=>sum+(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0),0);
+  const money=(value:number)=>`${draft.currency||company?.base_currency||'USD'} ${value.toFixed(2)}`;
+
   if(!company)return <div className="nogna-placeholder"><h1>Invoices</h1><p>Create a workspace before creating invoices.</p></div>;
-  if(editing)return <div className="nogna-invoice-editor"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">DRAFT DOCUMENT</p><h1>{draft.document_type==='quote'?'Quote':'Invoice'} {draft.document_number&&'· '+draft.document_number}</h1></div><div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div></div>{message&&<div className="nogna-customer-notice is-success">{message}</div>}<div className="nogna-settings-card"><h2>Document details</h2><div className="nogna-settings-grid"><label className="nogna-field"><span>Type</span><select value={draft.document_type} onChange={e=>setDraft({...draft,document_type:e.target.value})}><option value="invoice">Invoice</option><option value="quote">Quote</option></select></label><label className="nogna-field"><span>Customer</span><select value={draft.customer_id} onChange={e=>setDraft({...draft,customer_id:Number(e.target.value)})}><option value="">Select customer</option>{customers.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label className="nogna-field"><span>Document number</span><input value={draft.document_number||''} onChange={e=>setDraft({...draft,document_number:e.target.value})} placeholder="Auto-generated if blank"/></label><label className="nogna-field"><span>Currency</span><input value={draft.currency} onChange={e=>setDraft({...draft,currency:e.target.value.toUpperCase()})}/></label><label className="nogna-field"><span>Issue date</span><input type="date" value={draft.issue_date} onChange={e=>setDraft({...draft,issue_date:e.target.value})}/></label><label className="nogna-field"><span>Payment terms / notes</span><input value={draft.administrative_notes||''} onChange={e=>setDraft({...draft,administrative_notes:e.target.value})}/></label><label className="nogna-field"><span>Discount %</span><input type="number" step="0.01" value={draft.discount_percent||0} onChange={e=>setDraft({...draft,discount_percent:Number(e.target.value)})}/></label><label className="nogna-field"><span>Tax %</span><input type="number" step="0.01" value={draft.tax_percent||0} onChange={e=>setDraft({...draft,tax_percent:Number(e.target.value)})}/></label></div></div>{draft.sections.map((s:any,si:number)=><section className="nogna-settings-card nogna-invoice-section" key={si}><div className="nogna-panel-heading"><h2>Section {si+1}</h2><button className="nogna-secondary-button" onClick={()=>setDraft({...draft,sections:draft.sections.filter((_:any,i:number)=>i!==si)})}>Remove</button></div><div className="nogna-settings-grid"><label className="nogna-field"><span>Section name</span><input value={s.name} onChange={e=>updateSection(si,'name',e.target.value)} placeholder="e.g. Design & Strategy"/></label><label className="nogna-field"><span>Units multiplier</span><input type="number" step="0.01" value={s.units_multiplier} onChange={e=>updateSection(si,'units_multiplier',Number(e.target.value))}/></label></div>{s.items.map((x:any,ii:number)=><div className="nogna-invoice-line" key={ii}><input value={x.description} placeholder="Line item description" onChange={e=>updateItem(si,ii,'description',e.target.value)}/><input type="number" step="0.01" value={x.units} title="Units" onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/><input type="number" step="0.01" value={x.days} title="Days" onChange={e=>updateItem(si,ii,'days',Number(e.target.value))}/><input type="number" step="0.01" value={x.unit_cost} title="Unit cost" onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/><button className="nogna-secondary-button" onClick={()=>updateSection(si,'items',s.items.filter((_:any,j:number)=>j!==ii))}>×</button></div>)}<button className="nogna-create-company" onClick={()=>updateSection(si,'items',[...s.items,{description:'',units:1,days:1,unit_cost:0}])}>＋ Add line item</button></section>)}<button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add section</button></div>;
+
+  if(editing)return <div className="nogna-invoice-editor">
+    <div className="nogna-page-heading">
+      <div><p className="nogna-home-eyebrow">INCOME / NEW DOCUMENT</p><h1>{draft.document_type==='quote'?'Quote':'Invoice'} {draft.document_number&&'· '+draft.document_number}</h1></div>
+      <div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
+    </div>
+    {message&&<div className="nogna-customer-notice is-success">{message}</div>}
+    <div className="nogna-settings-card">
+      <h2>Document details</h2>
+      <p className="nogna-settings-help">Choose who this document is for and set its basic billing information.</p>
+      <div className="nogna-settings-grid">
+        <label className="nogna-field"><span>Document type</span><select value={draft.document_type} onChange={e=>setDraft({...draft,document_type:e.target.value})}><option value="invoice">Invoice</option><option value="quote">Quote</option></select></label>
+        <label className="nogna-field"><span>Customer</span><select value={draft.customer_id} onChange={e=>setDraft({...draft,customer_id:Number(e.target.value)})}><option value="">Select customer</option>{customers.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
+        <label className="nogna-field"><span>Document number</span><input value={draft.document_number||''} onChange={e=>setDraft({...draft,document_number:e.target.value})} placeholder="Leave blank for automatic number"/></label>
+        <label className="nogna-field"><span>Currency</span><input value={draft.currency} onChange={e=>setDraft({...draft,currency:e.target.value.toUpperCase()})}/></label>
+        <label className="nogna-field"><span>Issue date</span><input type="date" value={draft.issue_date} onChange={e=>setDraft({...draft,issue_date:e.target.value})}/></label>
+        <label className="nogna-field"><span>Payment terms / notes</span><input value={draft.administrative_notes||''} onChange={e=>setDraft({...draft,administrative_notes:e.target.value})}/></label>
+        <label className="nogna-field"><span>Discount percentage</span><input type="number" min="0" step="0.01" value={draft.discount_percent||0} onChange={e=>setDraft({...draft,discount_percent:Number(e.target.value)})}/></label>
+        <label className="nogna-field"><span>Tax percentage</span><input type="number" min="0" step="0.01" value={draft.tax_percent||0} onChange={e=>setDraft({...draft,tax_percent:Number(e.target.value)})}/></label>
+      </div>
+    </div>
+    {draft.sections.map((s:any,si:number)=>{
+      const subtotal=sectionSubtotal(s);
+      const multiplied=subtotal*(Number(s.units_multiplier)||1);
+      return <section className="nogna-settings-card nogna-invoice-section" key={si}>
+        <div className="nogna-panel-heading">
+          <div><h2>{s.name||`Room / section ${si+1}`}</h2><p className="nogna-settings-help">Enter the details once for this room or repeated area.</p></div>
+          <button className="nogna-secondary-button" onClick={()=>setDraft({...draft,sections:draft.sections.filter((_:any,i:number)=>i!==si)})}>Remove section</button>
+        </div>
+        <div className="nogna-settings-grid">
+          <label className="nogna-field"><span>Room / section name</span><input value={s.name} onChange={e=>updateSection(si,'name',e.target.value)} placeholder="Example: Room 1"/></label>
+          <label className="nogna-field"><span>How many identical rooms?</span><input type="number" min="1" step="1" value={s.units_multiplier} onChange={e=>updateSection(si,'units_multiplier',Number(e.target.value))}/><small className="nogna-field-help">The room subtotal is multiplied by this number.</small></label>
+        </div>
+        <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span>Units</span><span>Days</span><span>Unit amount</span><span>Line total</span><span></span></div>
+        {s.items.map((x:any,ii:number)=>{
+          const line=(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);
+          return <div className="nogna-invoice-line" key={ii}>
+            <label><span>Item / equipment</span><input value={x.description} placeholder="Example: Projector" onChange={e=>updateItem(si,ii,'description',e.target.value)}/></label>
+            <label><span>Units</span><input type="number" min="0" step="0.01" value={x.units} onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/></label>
+            <label><span>Days</span><input type="number" min="0" step="0.01" value={x.days} onChange={e=>updateItem(si,ii,'days',Number(e.target.value))}/></label>
+            <label><span>Unit amount</span><input type="number" min="0" step="0.01" value={x.unit_cost} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
+            <strong className="nogna-line-total">{money(line)}</strong>
+            <button className="nogna-secondary-button" aria-label="Remove item" onClick={()=>updateSection(si,'items',s.items.filter((_:any,j:number)=>j!==ii))}>×</button>
+          </div>;
+        })}
+        <button className="nogna-create-company" onClick={()=>updateSection(si,'items',[...s.items,{description:'',units:1,days:1,unit_cost:0}])}>＋ Add item / equipment</button>
+        <div className="nogna-section-total"><span>Room subtotal: <strong>{money(subtotal)}</strong></span><span>× {Number(s.units_multiplier)||1} identical room{Number(s.units_multiplier)===1?'':'s'} = <strong>{money(multiplied)}</strong></span></div>
+      </section>;
+    })}
+    <button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another room / section</button>
+  </div>;
+
   return <div className="nogna-invoice-list"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">INCOME</p><h1>Invoices</h1></div><button className="nogna-save-button" onClick={start}>＋ New invoice</button></div>{message&&<div className="nogna-customer-notice is-error">{message}</div>}<div className="nogna-settings-card nogna-invoice-table">{invoices.length?<>{invoices.map(inv=><button className="nogna-invoice-row" key={inv.id} onClick={()=>{setDraft({...inv,sections:inv.sections||[emptySection()]});setEditing(inv)}}><span><strong>{inv.invoice_number}</strong><small>{inv.customer_name||'No customer'}</small></span><span>{inv.currency} {Number(inv.total||0).toFixed(2)}</span><em>{inv.status}</em></button>)}</>:<div className="nogna-empty-state"><p>No invoices yet. Create the first draft from this screen.</p></div>}</div></div>;
 }
