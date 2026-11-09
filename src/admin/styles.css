@@ -240,3 +240,11 @@ html, body { overflow:hidden; }
 .nogna-settings-notice{padding:10px 14px;border:1px solid;border-radius:8px;font-size:13px}
 .nogna-settings-notice.is-success{border-color:#287b58;background:#173d2d;color:#8be0b5}
 .nogna-settings-notice.is-error{border-color:#8d3d42;background:#401f24;color:#ffb0b6}
+
+
+.nogna-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.65)}
+.nogna-dialog{width:min(520px,100%);padding:26px;border:1px solid var(--nogna-border);border-radius:var(--nogna-radius);background:var(--nogna-panel);box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.nogna-dialog h1{margin:0;font-size:24px;font-weight:500}
+.nogna-dialog p{margin:7px 0 22px;color:var(--nogna-muted)}
+.nogna-dialog .nogna-field{margin-bottom:15px}
+.nogna-dialog .nogna-form-actions{margin-top:22px}
