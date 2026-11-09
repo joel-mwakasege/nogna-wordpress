@@ -83,17 +83,18 @@ final class InvoiceController
     private function save_document(int $invoice_id, \WP_REST_Request $request): void
     {
         global $wpdb; $sections=$request->get_param('sections');
-        if (!is_array($sections)) return;
+        if (!is_array($sections)) return true;
         $st=$wpdb->prefix.'nogna_invoice_sections'; $it=$wpdb->prefix.'nogna_invoice_items';
         $wpdb->delete($st,['invoice_id'=>$invoice_id]); $wpdb->delete($it,['invoice_id'=>$invoice_id]);
         foreach($sections as $si=>$section){
-            $wpdb->insert($st,['invoice_id'=>$invoice_id,'name'=>sanitize_text_field((string)($section['name']??'')),'units_multiplier'=>max(1, (int)round((float)($section['units_multiplier']??1))),'hide_header'=>empty($section['hide_header'])?0:1,'sort_order'=>$si,'created_at'=>current_time('mysql', true)]);
+            if (!$wpdb->insert($st,['invoice_id'=>$invoice_id,'name'=>sanitize_text_field((string)($section['name']??'')),'units_multiplier'=>max(1, (int)round((float)($section['units_multiplier']??1))),'hide_header'=>empty($section['hide_header'])?0:1,'sort_order'=>$si,'created_at'=>current_time('mysql', true)])) return false;
             $section_id=(int)$wpdb->insert_id;
             foreach((array)($section['items']??[]) as $ii=>$item){
-                $wpdb->insert($it,['invoice_id'=>$invoice_id,'section_id'=>$section_id,'description'=>sanitize_text_field((string)($item['description']??'')),'units'=>(float)($item['units']??1),'days'=>max(0, (int)round((float)($item['days']??1))),'unit_cost'=>(float)($item['unit_cost']??0),'group_id'=>sanitize_text_field((string)($item['group_id']??'')),'is_group_parent'=>empty($item['is_group_parent'])?0:1,'remarks'=>sanitize_textarea_field((string)($item['remarks']??'')),'sort_order'=>$ii]);
+                if (!$wpdb->insert($it,['invoice_id'=>$invoice_id,'section_id'=>$section_id,'description'=>sanitize_text_field((string)($item['description']??'')),'units'=>(float)($item['units']??1),'days'=>max(0, (int)round((float)($item['days']??1))),'unit_cost'=>(float)($item['unit_cost']??0),'group_id'=>sanitize_text_field((string)($item['group_id']??'')),'is_group_parent'=>empty($item['is_group_parent'])?0:1,'remarks'=>sanitize_textarea_field((string)($item['remarks']??'')),'sort_order'=>$ii])) return false;
             }
         }
         $this->recalculate($invoice_id);
+        return true;
     }
 
     private function recalculate(int $id): void
