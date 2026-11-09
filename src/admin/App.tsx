@@ -73,7 +73,7 @@ export default function App() {
       </aside>
       <main className="nogna-app-main">
         {section === 'company' && <CompanyView companies={companies} selected={selected} setSelected={setSelected} loading={loading}/>}
-        {section === 'customers' && <Placeholder title="Customers" text="Customer management will use this same application shell."/>}
+        {section === 'customers' && <CustomerView company={selected}/>}
         {section === 'home' && <Placeholder title="Home" text="The overview will be rebuilt inside this shell as financial modules are implemented."/>}
         {section === 'settings' && <SettingsView value={appearance} onChange={(next) => {setAppearance(next); applyAppearance(next);}}/>}
       </main>
@@ -86,6 +86,20 @@ function CompanyView({companies,selected,setSelected,loading}:{companies:Company
 }
 function Field({label,value,required}:{label:string;value:string;required?:boolean}) { return <label className="nogna-field"><span>{label}{required&&<em> *</em>}</span><input value={value} readOnly/></label>; }
 function Placeholder({title,text}:{title:string;text:string}) { return <div className="nogna-placeholder"><h1>{title}</h1><p>{text}</p></div>; }
+
+function CustomerView({company}:{company:Company|null}) {
+  const [customers,setCustomers]=useState<any[]>([]);
+  const [search,setSearch]=useState('');
+  const [selectedCustomer,setSelectedCustomer]=useState<any|null>(null);
+  const [showForm,setShowForm]=useState(false);
+  const [form,setForm]=useState({name:'',email:'',phone:'',tax_number:'',notes:''});
+  const [message,setMessage]=useState('');
+  useEffect(()=>{if(!company)return;api('/companies/'+company.id+'/customers').then(r=>{setCustomers(r.data||[]);setSelectedCustomer((r.data||[])[0]||null)}).catch(e=>setMessage(e.message))},[company]);
+  const visible=customers.filter(c=>(c.name+' '+(c.email||'')).toLowerCase().includes(search.toLowerCase()));
+  const save=()=>{if(!company)return;api('/companies/'+company.id+'/customers',{method:'POST',body:JSON.stringify(form)}).then(r=>{setCustomers([r.data,...customers]);setSelectedCustomer(r.data);setShowForm(false);setForm({name:'',email:'',phone:'',tax_number:'',notes:''});setMessage('Customer created')}).catch(e=>setMessage(e.message))};
+  if(!company)return <div className="nogna-placeholder"><h1>Customers</h1><p>Create a workspace before adding customers.</p></div>;
+  return <div className="nogna-customer-view"><aside className="nogna-customer-list"><div className="nogna-list-title">CUSTOMERS <button className="nogna-list-add" onClick={()=>setShowForm(true)}>＋</button></div><input className="nogna-customer-search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search customers..."/><div className="nogna-customer-rows">{visible.map(c=><button key={c.id} className={'nogna-customer-row '+(selectedCustomer?.id===c.id?'is-selected':'')} onClick={()=>setSelectedCustomer(c)}><span className="nogna-company-avatar">{c.name.charAt(0)}</span><span><strong>{c.name}</strong><small>{c.email||'No email'}</small></span></button>)}{!visible.length&&<div className="nogna-list-empty">No customers yet.</div>}</div><button className="nogna-create-company" onClick={()=>setShowForm(true)}>＋ Create customer</button></aside><section className="nogna-customer-detail">{showForm?<div className="nogna-customer-form"><h1>Add customer</h1>{['name','email','phone','tax_number','notes'].map(key=><label className="nogna-field" key={key}><span>{key.replace('_',' ')}</span>{key==='notes'?<textarea rows={4} value={(form as any)[key]} onChange={e=>setForm({...form,[key]:e.target.value})}/>:<input value={(form as any)[key]} onChange={e=>setForm({...form,[key]:e.target.value})}/>}</label>)}<div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={()=>setShowForm(false)}>Cancel</button><button className="nogna-save-button" onClick={save}>Save customer</button></div></div>:selectedCustomer?<><div className="nogna-company-title"><div className="nogna-company-heading"><span className="nogna-company-avatar large">{selectedCustomer.name.charAt(0)}</span><div><h1>{selectedCustomer.name}</h1><p>Customer · Active</p></div></div></div><nav className="nogna-tabs"><button className="is-active">Master data</button><button disabled>Address</button><button disabled>History</button></nav><div className="nogna-company-fields"><Field label="Customer name" value={selectedCustomer.name}/><Field label="Email" value={selectedCustomer.email||''}/><Field label="Phone" value={selectedCustomer.phone||''}/><Field label="Tax number" value={selectedCustomer.tax_number||''}/></div></>:<div className="nogna-empty-state"><p>Select a customer or create one.</p></div>}{message&&<div className="nogna-settings-help">{message}</div>}</section></div>;
+}
 
 function SettingsView({value,onChange}:{value:Appearance;onChange:(v:Appearance)=>void}) {
   const [draft,setDraft]=useState(value); const [status,setStatus]=useState('');
