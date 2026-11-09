@@ -177,12 +177,12 @@ function InvoiceView({company}:{company:Company|null}) {
       const multiplied=subtotal*(Number(s.units_multiplier)||1);
       return <section className="nogna-settings-card nogna-invoice-section" key={si}>
         <div className="nogna-panel-heading">
-          <div><h2>{s.name||`Room / section ${si+1}`}</h2><p className="nogna-settings-help">Enter the details once for this room or repeated area.</p></div>
+          <div><h2>{s.name||`Section ${si+1}`}</h2><p className="nogna-settings-help">Enter the details for this section. Repeat it when the same items apply elsewhere.</p></div>
           <button className="nogna-secondary-button" onClick={()=>setDraft({...draft,sections:draft.sections.filter((_:any,i:number)=>i!==si)})}>Remove section</button>
         </div>
         <div className="nogna-settings-grid">
-          <label className="nogna-field"><span>Room / section name</span><input value={s.name} onChange={e=>updateSection(si,'name',e.target.value)} placeholder="Example: Room 1"/></label>
-          <label className="nogna-field"><span>How many identical rooms?</span><input type="number" min="1" step="1" value={s.units_multiplier} onChange={e=>updateSection(si,'units_multiplier',Number(e.target.value))}/><small className="nogna-field-help">The room subtotal is multiplied by this number.</small></label>
+          <label className="nogna-field"><span>Section name</span><input value={s.name} onChange={e=>updateSection(si,'name',e.target.value)} placeholder="Example: Design & Strategy"/></label>
+          <label className="nogna-field"><span>Repeat this section</span><input type="number" min="1" step="1" value={s.units_multiplier} onChange={e=>updateSection(si,'units_multiplier',Number(e.target.value))}/><small className="nogna-field-help">The section subtotal is multiplied by this number.</small></label>
         </div>
         <div className="nogna-group-help">To share one cost across several items, give them the same group name and mark one row as the cost owner. Units and days remain editable for every item.</div>
         <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span>Units</span><span>Days</span><span>Unit amount</span><span>Group</span><span>Line total</span><span></span></div>
@@ -199,10 +199,10 @@ function InvoiceView({company}:{company:Company|null}) {
           </div>;
         })}
         <button className="nogna-create-company" onClick={()=>updateSection(si,'items',[...s.items,{description:'',units:1,days:1,unit_cost:0,group_id:'',is_group_parent:false}])}>＋ Add item / equipment</button>
-        <div className="nogna-section-total"><span>Room subtotal: <strong>{money(subtotal)}</strong></span><span>× {Number(s.units_multiplier)||1} identical room{Number(s.units_multiplier)===1?'':'s'} = <strong>{money(multiplied)}</strong></span></div>
+        <div className="nogna-section-total"><span>Section subtotal: <strong>{money(subtotal)}</strong></span><span>× {Number(s.units_multiplier)||1} identical section{Number(s.units_multiplier)===1?'':'s'} = <strong>{money(multiplied)}</strong></span></div>
       </section>;
     })}
-    <button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another room / section</button>
+    <button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
   </div>;
 
   return <div className="nogna-invoice-list"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">INCOME</p><h1>Invoices</h1></div><button className="nogna-save-button" onClick={start}>＋ New invoice</button></div>{message&&<div className="nogna-customer-notice is-error">{message}</div>}<div className="nogna-settings-card nogna-invoice-table">{invoices.length?<>{invoices.map(inv=><button className="nogna-invoice-row" key={inv.id} onClick={()=>{setDraft({...inv,sections:inv.sections||[emptySection()]});setEditing(inv)}}><span><strong>{inv.invoice_number}</strong><small>{inv.customer_name||'No customer'}</small></span><span>{inv.currency} {Number(inv.total||0).toFixed(2)}</span><em>{inv.status}</em></button>)}</>:<div className="nogna-empty-state"><p>No invoices yet. Create the first draft from this screen.</p></div>}</div></div>;
