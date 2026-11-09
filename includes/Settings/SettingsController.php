@@ -47,7 +47,7 @@ final class SettingsController
         return new \WP_REST_Response(['data' => $saved]);
     }
 
-    private function can_manage(): bool
+    public function can_manage(): bool
     {
         return is_user_logged_in() && current_user_can('manage_options');
     }
