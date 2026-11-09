@@ -154,3 +154,23 @@ html, body { overflow:hidden; }
   .nogna-app-body { height:auto; min-height:calc(100vh - 58px); overflow:visible; }
   .nogna-app-main { overflow:visible; }
 }
+
+/* Header navigation and collapsible sidebar */
+.nogna-header-title{display:flex;align-items:center;gap:10px;color:#e8e8e8;font-size:15px}
+.nogna-sidebar-toggle{display:grid;place-items:center;width:30px;height:30px;margin-right:2px;border:0;border-radius:7px;background:transparent;color:#999}
+.nogna-sidebar-toggle:hover{background:#303030;color:#fff}
+.nogna-app.is-sidebar-collapsed .nogna-app-sidebar{width:72px;flex-basis:72px;padding-left:8px;padding-right:8px}
+.nogna-app.is-sidebar-collapsed .nogna-logo{justify-content:center;padding-left:0;padding-right:0}
+.nogna-app.is-sidebar-collapsed .nogna-logo>div,
+.nogna-app.is-sidebar-collapsed .nogna-nav-text,
+.nogna-app.is-sidebar-collapsed .nogna-sidebar-label{display:none}
+.nogna-app.is-sidebar-collapsed .nogna-app-sidebar>button{justify-content:center;padding-left:0;padding-right:0}
+.nogna-app.is-sidebar-collapsed .nogna-company-switcher{justify-content:center;padding-left:0;padding-right:0}
+.nogna-app.is-sidebar-collapsed .nogna-company-switcher>svg{display:none}
+.nogna-app.is-sidebar-collapsed .nogna-account-tools{justify-content:center}
+.nogna-app.is-sidebar-collapsed .nogna-account-tools>svg{display:none}
+.nogna-app.is-sidebar-collapsed .nogna-account-tools button{flex:0 0 auto;padding:8px!important}
+@media(max-width:760px){
+ .nogna-sidebar-toggle{display:none}
+ .nogna-header-title{font-size:14px}
+}
