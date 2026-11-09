@@ -222,3 +222,10 @@ html, body { overflow:hidden; }
 .nogna-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
 .nogna-secondary-button{padding:11px 16px;border:1px solid #444;border-radius:8px;background:#292929;color:#eee}
 @media(max-width:760px){.nogna-customer-view{display:block;min-height:0}.nogna-customer-list{max-height:330px;border-right:0}.nogna-customer-detail{border-top:1px solid #353535}.nogna-customer-form{padding:20px 17px}}
+
+
+.nogna-customer-detail{position:relative}
+.nogna-customer-notice{margin:16px 25px 0;padding:11px 14px;border:1px solid;border-radius:8px;font-size:13px}
+.nogna-customer-notice.is-success{border-color:#287b58;background:#173d2d;color:#8be0b5}
+.nogna-customer-notice.is-error{border-color:#8d3d42;background:#401f24;color:#ffb0b6}
+@media(max-width:760px){.nogna-customer-notice{margin:14px 17px 0}}
