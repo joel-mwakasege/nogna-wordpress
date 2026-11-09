@@ -63,6 +63,7 @@ final class Plugin
 
         (new CompanyController())->register_routes();
         (new CustomerController())->register_routes();
+        (new InvoiceController())->register_routes();
         (new SettingsController())->register_routes();
     }
 
