@@ -76,6 +76,18 @@ final class CompanyRepository
         }, $wpdb->get_results($sql, ARRAY_A) ?: []);
     }
 
+    public function update(int $company_id, array $data): bool
+    {
+        global $wpdb;
+        return false !== $wpdb->update(
+            $wpdb->prefix . 'nogna_companies',
+            ['name'=>$data['name'], 'slug'=>$data['slug'], 'base_currency'=>$data['base_currency'], 'timezone'=>$data['timezone'], 'updated_at'=>current_time('mysql', true)],
+            ['id'=>$company_id],
+            ['%s','%s','%s','%s','%s'],
+            ['%d']
+        );
+    }
+
     public function user_has_access(int $company_id, int $user_id): bool
     {
         global $wpdb;
