@@ -118,6 +118,11 @@ final class MigrationRunner
             tax_total decimal(20,6) NOT NULL DEFAULT 0,
             total decimal(20,6) NOT NULL DEFAULT 0,
             amount_paid decimal(20,6) NOT NULL DEFAULT 0,
+            document_number varchar(80) NULL,
+            document_type varchar(20) NOT NULL DEFAULT 'invoice',
+            discount_percent decimal(10,6) NOT NULL DEFAULT 0,
+            tax_percent decimal(10,6) NOT NULL DEFAULT 0,
+            administrative_notes text NULL,
             notes text NULL,
             created_by bigint(20) unsigned NOT NULL,
             created_at datetime NOT NULL,
@@ -142,6 +147,18 @@ final class MigrationRunner
             line_total decimal(20,6) NOT NULL DEFAULT 0,
             sort_order int(11) NOT NULL DEFAULT 0,
             PRIMARY KEY  (id),
+            KEY invoice_sort (invoice_id, sort_order)
+        ) {$charset};");
+
+        dbDelta("CREATE TABLE {$invoice_sections} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            invoice_id bigint(20) unsigned NOT NULL,
+            name varchar(190) NOT NULL DEFAULT '',
+            units_multiplier decimal(20,6) NOT NULL DEFAULT 1,
+            hide_header tinyint(1) NOT NULL DEFAULT 0,
+            sort_order int(11) NOT NULL DEFAULT 0,
+            created_at datetime NOT NULL,
+            PRIMARY KEY (id),
             KEY invoice_sort (invoice_id, sort_order)
         ) {$charset};");
 
