@@ -24,7 +24,7 @@ final class CompanyController
                     ],
                     'slug' => [
                         'required' => false,
-                        'sanitize_callback' => 'sanitize_title',
+                        'sanitize_callback' => static fn($value): string => sanitize_title((string) $value),
                     ],
                     'base_currency' => [
                         'required' => false,
