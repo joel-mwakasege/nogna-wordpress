@@ -148,7 +148,13 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const updateSection=(si:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i===si?{...s,[key]:value}:s)});
   const updateItem=(si:number,ii:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i!==si?s:{...s,items:s.items.map((x:any,j:number)=>j===ii?{...x,[key]:value}:x)})});
   const sectionSubtotal=(s:any)=>s.items.reduce((sum:number,x:any)=>sum+(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0),0);
-  const showUnits=appearance.invoice_show_units !== '0';\n  const showDays=appearance.invoice_show_days !== '0';\n  const showAmount=appearance.invoice_show_unit_amount !== '0';\n  const unitsLabel=appearance.invoice_units_label || 'Units';\n  const daysLabel=appearance.invoice_days_label || 'Days';\n  const amountLabel=appearance.invoice_unit_amount_label || 'Unit amount';\n  const money=(value:number)=>`${draft.currency||company?.base_currency||'USD'} ${value.toFixed(2)}`;
+  const showUnits=appearance.invoice_show_units !== '0';
+  const showDays=appearance.invoice_show_days !== '0';
+  const showAmount=appearance.invoice_show_unit_amount !== '0';
+  const unitsLabel=appearance.invoice_units_label || 'Units';
+  const daysLabel=appearance.invoice_days_label || 'Days';
+  const amountLabel=appearance.invoice_unit_amount_label || 'Unit amount';
+  const money=(value:number)=>`${draft.currency||company?.base_currency||'USD'} ${value.toFixed(2)}`;
 
   if(!company)return <div className="nogna-placeholder"><h1>Invoices</h1><p>Create a workspace before creating invoices.</p></div>;
 
