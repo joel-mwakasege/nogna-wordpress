@@ -179,14 +179,14 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
       <h2>Document details</h2>
       <p className="nogna-settings-help">Choose who this document is for and set its basic billing information.</p>
       <div className="nogna-settings-grid">
-        <label className="nogna-field"><span>Document type</span><select value={draft.document_type} onChange={e=>setDraft({...draft,document_type:e.target.value})}><option value="invoice">Invoice</option><option value="quote">Quote</option></select></label>
-        <label className="nogna-field"><span>Customer</span><select value={draft.customer_id} onChange={e=>setDraft({...draft,customer_id:Number(e.target.value)})}><option value="">Select customer</option>{customers.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
-        <label className="nogna-field"><span>Document number</span><input value={draft.document_number||''} onChange={e=>setDraft({...draft,document_number:e.target.value})} placeholder="Leave blank for automatic number"/></label>
-        <label className="nogna-field"><span>Currency</span><input value={draft.currency} onChange={e=>setDraft({...draft,currency:e.target.value.toUpperCase()})}/></label>
-        <label className="nogna-field"><span>Issue date</span><input type="date" value={draft.issue_date} onChange={e=>setDraft({...draft,issue_date:e.target.value})}/></label>
-        <label className="nogna-field"><span>Payment terms / notes</span><input value={draft.administrative_notes||''} onChange={e=>setDraft({...draft,administrative_notes:e.target.value})}/></label>
-        <label className="nogna-field"><span>Discount percentage</span><input type="number" min="0" max="100" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(draft.discount_percent)||0))} onChange={e=>setDraft({...draft,discount_percent:Math.max(0,Math.min(100,parseInt(e.target.value,10)||0))})}/></label>
-        <label className="nogna-field"><span>Tax percentage</span><input type="number" min="0" max="100" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(draft.tax_percent)||0))} onChange={e=>setDraft({...draft,tax_percent:Math.max(0,Math.min(100,parseInt(e.target.value,10)||0))})}/></label>
+        <label className="nogna-field"><span>Document type</span><select value={draft.document_type} onChange={e=>commitDraft({...draft,document_type:e.target.value})}><option value="invoice">Invoice</option><option value="quote">Quote</option></select></label>
+        <label className="nogna-field"><span>Customer</span><select value={draft.customer_id} onChange={e=>commitDraft({...draft,customer_id:Number(e.target.value)})}><option value="">Select customer</option>{customers.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
+        <label className="nogna-field"><span>Document number</span><input value={draft.document_number||''} onChange={e=>commitDraft({...draft,document_number:e.target.value})} placeholder="Leave blank for automatic number"/></label>
+        <label className="nogna-field"><span>Currency</span><input value={draft.currency} onChange={e=>commitDraft({...draft,currency:e.target.value.toUpperCase()})}/></label>
+        <label className="nogna-field"><span>Issue date</span><input type="date" value={draft.issue_date} onChange={e=>commitDraft({...draft,issue_date:e.target.value})}/></label>
+        <label className="nogna-field"><span>Payment terms / notes</span><input value={draft.administrative_notes||''} onChange={e=>commitDraft({...draft,administrative_notes:e.target.value})}/></label>
+        <label className="nogna-field"><span>Discount percentage</span><input type="number" min="0" max="100" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(draft.discount_percent)||0))} onChange={e=>commitDraft({...draft,discount_percent:Math.max(0,Math.min(100,parseInt(e.target.value,10)||0))})}/></label>
+        <label className="nogna-field"><span>Tax percentage</span><input type="number" min="0" max="100" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(draft.tax_percent)||0))} onChange={e=>commitDraft({...draft,tax_percent:Math.max(0,Math.min(100,parseInt(e.target.value,10)||0))})}/></label>
       </div>
     </div>
     {draft.sections.map((s:any,si:number)=>{
@@ -226,7 +226,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
         <div className="nogna-section-total"><span>Section subtotal: <strong>{money(subtotal)}</strong></span><span>× {Number(s.units_multiplier)||1} identical section{Number(s.units_multiplier)===1?'':'s'} = <strong>{money(multiplied)}</strong></span></div>
       </section>;
     })}
-    <button className="nogna-create-company" onClick={()=>setDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
+    <button className="nogna-create-company" onClick={()=>commitDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
     <div className="nogna-invoice-totals"><div><span>Subtotal</span><strong>{money(baseSubtotal)}</strong></div><div><span>Discount</span><strong>- {money(discountTotal)}</strong></div><div><span>Tax</span><strong>{money(taxTotal)}</strong></div><div className="is-grand-total"><span>Grand total</span><strong>{money(grandTotal)}</strong></div></div>
     <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
