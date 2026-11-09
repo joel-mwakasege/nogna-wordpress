@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 final class MigrationRunner
 {
     private const VERSION_OPTION = 'nogna_billing_schema_version';
-    private const SCHEMA_VERSION = '0.4.0';
+    private const SCHEMA_VERSION = '0.5.0';
 
     public function run(): void
     {
@@ -102,6 +102,7 @@ final class MigrationRunner
 
         $invoices = $wpdb->prefix . 'nogna_invoices';
         $invoice_items = $wpdb->prefix . 'nogna_invoice_items';
+        $invoice_sections = $wpdb->prefix . 'nogna_invoice_sections';
 
         dbDelta("CREATE TABLE {$invoices} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -133,11 +134,11 @@ final class MigrationRunner
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             invoice_id bigint(20) unsigned NOT NULL,
             description varchar(255) NOT NULL,
-            quantity decimal(20,6) NOT NULL DEFAULT 1,
+            quantity decimal(20,6) NOT NULL DEFAULT 1,\n            units decimal(20,6) NOT NULL DEFAULT 1,\n            days decimal(20,6) NOT NULL DEFAULT 1,
             unit_price decimal(20,6) NOT NULL DEFAULT 0,
             discount_amount decimal(20,6) NOT NULL DEFAULT 0,
             tax_rate decimal(10,6) NOT NULL DEFAULT 0,
-            tax_amount decimal(20,6) NOT NULL DEFAULT 0,
+            tax_amount decimal(20,6) NOT NULL DEFAULT 0,\n            group_id varchar(80) NULL,\n            is_group_parent tinyint(1) NOT NULL DEFAULT 0,\n            remarks text NULL,
             line_total decimal(20,6) NOT NULL DEFAULT 0,
             sort_order int(11) NOT NULL DEFAULT 0,
             PRIMARY KEY  (id),
