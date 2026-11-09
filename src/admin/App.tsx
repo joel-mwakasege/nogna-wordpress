@@ -64,7 +64,8 @@ export default function App() {
         <div className="nogna-logo">{appearance.logo_url && <img src={appearance.logo_url} alt={appearance.brand_name}/>}<div>{appearance.brand_name}<small>{appearance.brand_subtitle}</small></div></div>
         <button className={section === 'home' ? 'is-active' : ''} onClick={() => navigate('home')}><Home size={18}/><span className="nogna-nav-text">Home</span></button>
         <div className="nogna-sidebar-label">MASTER DATA</div>
-        <button className={section === 'customers' ? 'is-active' : ''} onClick={() => navigate('customers')}><UsersRound size={18}/><span className="nogna-nav-text">Customers</span></button>\n        <button className={section === 'invoices' ? 'is-active' : ''} onClick={() => navigate('invoices')}><FileText size={18}/><span className="nogna-nav-text">Invoices</span></button>
+        <button className={section === 'customers' ? 'is-active' : ''} onClick={() => navigate('customers')}><UsersRound size={18}/><span className="nogna-nav-text">Customers</span></button>
+        <button className={section === 'invoices' ? 'is-active' : ''} onClick={() => navigate('invoices')}><FileText size={18}/><span className="nogna-nav-text">Invoices</span></button>
         <button className={section === 'company' ? 'is-active' : ''} onClick={() => navigate('company')}><Building2 size={18}/><span className="nogna-nav-text">My Company</span></button>
         <div className="nogna-company-account">
           <button className="nogna-company-switcher" onClick={() => navigate('company')}><span className="nogna-company-avatar">{selected?.name?.charAt(0) || 'N'}</span><span className="nogna-nav-text"><small>Workspace</small><strong>{selected?.name || 'No workspace'}</strong></span><ChevronDown size={15}/></button>
@@ -73,7 +74,8 @@ export default function App() {
       </aside>
       <main className="nogna-app-main">
         {section === 'company' && <CompanyView companies={companies} selected={selected} setSelected={setSelected} loading={loading} onCreate={()=>setShowCompanyForm(true)}/>}
-        {section === 'customers' && <CustomerView company={selected}/>}\n        {section === 'invoices' && <InvoiceView company={selected}/>}
+        {section === 'customers' && <CustomerView company={selected}/>}
+        {section === 'invoices' && <InvoiceView company={selected}/>}
         {section === 'home' && <Placeholder title="Home" text="Your financial dashboard will appear here once income, expenses, and payments are implemented."/>}
         {section === 'settings' && <SettingsView value={appearance} onChange={(next) => {setAppearance(next); applyAppearance(next);}}/>}{showCompanyForm && <CompanyCreateForm value={companyForm} onChange={setCompanyForm} onCancel={()=>setShowCompanyForm(false)} onCreated={(company)=>{setCompanies([...companies,company]);setSelected(company);setShowCompanyForm(false);setSection('company');}}/>}
       </main>
