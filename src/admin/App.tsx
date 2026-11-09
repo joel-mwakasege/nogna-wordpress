@@ -74,7 +74,7 @@ export default function App() {
       <main className="nogna-app-main">
         {section === 'company' && <CompanyView companies={companies} selected={selected} setSelected={setSelected} loading={loading} onCreate={()=>setShowCompanyForm(true)}/>}
         {section === 'customers' && <CustomerView company={selected}/>}
-        {section === 'home' && <HomeView company={selected}/>}
+        {section === 'home' && <Placeholder title="Home" text="Your financial dashboard will appear here once income, expenses, and payments are implemented."/>}
         {section === 'settings' && <SettingsView value={appearance} onChange={(next) => {setAppearance(next); applyAppearance(next);}}/>}{showCompanyForm && <CompanyCreateForm value={companyForm} onChange={setCompanyForm} onCancel={()=>setShowCompanyForm(false)} onCreated={(company)=>{setCompanies([...companies,company]);setSelected(company);setShowCompanyForm(false);setSection('company');}}/>}
       </main>
     </div>
