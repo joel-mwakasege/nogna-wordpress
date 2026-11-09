@@ -420,3 +420,6 @@ html,body{overflow-x:hidden}
 .nogna-line-total{height:40px;display:flex;align-items:center;box-sizing:border-box}
 .nogna-invoice-section .nogna-panel-heading{align-items:flex-start}
 .nogna-invoice-section .nogna-panel-heading h2{margin-bottom:0}
+
+.is-hidden{display:none!important}
+.nogna-settings-card .nogna-setting-input select{height:40px;box-sizing:border-box}
