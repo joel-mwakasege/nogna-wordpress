@@ -53,7 +53,7 @@ final class InvoiceController
         if (!$ok) return $this->error('The document could not be created.',500);
         $id=(int)$wpdb->insert_id;
         $saved = $this->save_document($id,$request);
-        if (!$saved) return $this->error('The invoice details could not be saved. Please run the plugin database update.',500);
+        if (!$saved) { global $wpdb; return $this->error('Invoice save failed: ' . ($wpdb->last_error ?: 'the database rejected the invoice details.'), 500); }
         return new \WP_REST_Response(['data'=>$this->load($company,$id)],201);
     }
 
@@ -72,7 +72,7 @@ final class InvoiceController
         $data['updated_at']=current_time('mysql');
         if ($data) $wpdb->update($wpdb->prefix.'nogna_invoices',$data,['id'=>$id,'company_id'=>$company]);
         $saved = $this->save_document($id,$request);
-        if (!$saved) return $this->error('The invoice details could not be saved. Please run the plugin database update.',500);
+        if (!$saved) { global $wpdb; return $this->error('Invoice save failed: ' . ($wpdb->last_error ?: 'the database rejected the invoice details.'), 500); }
         $this->recalculate($id);
         return new \WP_REST_Response(['data'=>$this->load($company,$id)]);
     }
@@ -90,10 +90,10 @@ final class InvoiceController
         $st=$wpdb->prefix.'nogna_invoice_sections'; $it=$wpdb->prefix.'nogna_invoice_items';
         $wpdb->delete($st,['invoice_id'=>$invoice_id]); $wpdb->delete($it,['invoice_id'=>$invoice_id]);
         foreach($sections as $si=>$section){
-            if (!$wpdb->insert($st,['invoice_id'=>$invoice_id,'name'=>sanitize_text_field((string)($section['name']??'')),'units_multiplier'=>max(1, (int)round((float)($section['units_multiplier']??1))),'hide_header'=>empty($section['hide_header'])?0:1,'sort_order'=>$si,'created_at'=>current_time('mysql', true)])) return false;
+            if (!$wpdb->insert($st,['invoice_id'=>$invoice_id,'name'=>sanitize_text_field((string)($section['name']??'')),'units_multiplier'=>max(1, (int)round((float)($section['units_multiplier']??1))),'hide_header'=>empty($section['hide_header'])?0:1,'sort_order'=>$si,'created_at'=>current_time('mysql', true)])) { return false; }
             $section_id=(int)$wpdb->insert_id;
             foreach((array)($section['items']??[]) as $ii=>$item){
-                if (!$wpdb->insert($it,['invoice_id'=>$invoice_id,'section_id'=>$section_id,'description'=>sanitize_text_field((string)($item['description']??'')),'units'=>(float)($item['units']??1),'days'=>max(0, (int)round((float)($item['days']??1))),'unit_cost'=>(float)($item['unit_cost']??0),'group_id'=>sanitize_text_field((string)($item['group_id']??'')),'is_group_parent'=>empty($item['is_group_parent'])?0:1,'remarks'=>sanitize_textarea_field((string)($item['remarks']??'')),'sort_order'=>$ii])) return false;
+                if (!$wpdb->insert($it,['invoice_id'=>$invoice_id,'section_id'=>$section_id,'description'=>sanitize_text_field((string)($item['description']??'')),'units'=>(float)($item['units']??1),'days'=>max(0, (int)round((float)($item['days']??1))),'unit_cost'=>(float)($item['unit_cost']??0),'group_id'=>sanitize_text_field((string)($item['group_id']??'')),'is_group_parent'=>empty($item['is_group_parent'])?0:1,'remarks'=>sanitize_textarea_field((string)($item['remarks']??'')),'sort_order'=>$ii])) { return false; }
             }
         }
         $this->recalculate($invoice_id);
