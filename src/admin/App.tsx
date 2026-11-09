@@ -41,7 +41,7 @@ export default function App() {
   const [selected, setSelected] = useState<Company | null>(null);
   const [appearance, setAppearance] = useState<Appearance>(defaults);
   const [loading, setLoading] = useState(true);
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false); const [showCompanyForm, setShowCompanyForm] = useState(false); const [companyForm, setCompanyForm] = useState({name:'',slug:'',base_currency:'TZS',timezone:'Africa/Dar_es_Salaam'});
 
   useEffect(() => {
     Promise.all([api('/companies'), api('/settings/appearance').catch(() => ({data: defaults}))]).then(([companiesResponse, appearanceResponse]) => {
@@ -72,20 +72,26 @@ export default function App() {
         </div>
       </aside>
       <main className="nogna-app-main">
-        {section === 'company' && <CompanyView companies={companies} selected={selected} setSelected={setSelected} loading={loading}/>}
+        {section === 'company' && <CompanyView companies={companies} selected={selected} setSelected={setSelected} loading={loading} onCreate={()=>setShowCompanyForm(true)}/>}
         {section === 'customers' && <CustomerView company={selected}/>}
         {section === 'home' && <Placeholder title="Home" text="The overview will be rebuilt inside this shell as financial modules are implemented."/>}
-        {section === 'settings' && <SettingsView value={appearance} onChange={(next) => {setAppearance(next); applyAppearance(next);}}/>}
+        {section === 'settings' && <SettingsView value={appearance} onChange={(next) => {setAppearance(next); applyAppearance(next);}}/>}{showCompanyForm && <CompanyCreateForm value={companyForm} onChange={setCompanyForm} onCancel={()=>setShowCompanyForm(false)} onCreated={(company)=>{setCompanies([...companies,company]);setSelected(company);setShowCompanyForm(false);setSection('company');}}/>}
       </main>
     </div>
   </div>;
 }
 
-function CompanyView({companies,selected,setSelected,loading}:{companies:Company[];selected:Company|null;setSelected:(c:Company)=>void;loading:boolean}) {
-  return <div className="nogna-company-view"><aside className="nogna-company-list"><div className="nogna-list-title">MY COMPANIES</div>{loading&&<div className="nogna-list-empty">Loading companies…</div>}{!loading&&companies.map(c=><button key={c.id} className={'nogna-company-row '+(selected?.id===c.id?'is-selected':'')} onClick={()=>setSelected(c)}><span className="nogna-company-avatar">{c.name.charAt(0)}</span><span><strong>{c.name}</strong><small>{c.timezone}</small></span><span className="nogna-more">⋮</span></button>)}{!loading&&!companies.length&&<div className="nogna-list-empty">No companies yet.</div>}<button className="nogna-create-company">＋ Create company</button></aside><section className="nogna-company-detail"><div className="nogna-company-title"><div className="nogna-company-heading"><span className="nogna-company-avatar large">{selected?.name?.charAt(0)||'N'}</span><div><h1>{selected?.name||'My Company'}</h1><p>Active profile</p></div><ChevronDown size={17}/></div><span className="nogna-more">⋮</span></div><nav className="nogna-tabs"><button className="is-active">Company</button><button disabled>Address</button><button disabled>Contact</button><button disabled>History</button></nav><div className="nogna-company-fields"><Field label="Company name" value={selected?.name||''} required/><Field label="Workspace slug" value={selected?.slug||''}/><Field label="Base currency" value={selected?.base_currency||''}/><Field label="Timezone" value={selected?.timezone||''}/><Field label="Workspace owner" value={selected?.role==='owner'?'Owner':''}/></div></section></div>;
+function CompanyView({companies,selected,setSelected,loading,onCreate}:{companies:Company[];selected:Company|null;setSelected:(c:Company)=>void;loading:boolean;onCreate:()=>void}) {
+  return <div className="nogna-company-view"><aside className="nogna-company-list"><div className="nogna-list-title">MY COMPANIES</div>{loading&&<div className="nogna-list-empty">Loading companies…</div>}{!loading&&companies.map(c=><button key={c.id} className={'nogna-company-row '+(selected?.id===c.id?'is-selected':'')} onClick={()=>setSelected(c)}><span className="nogna-company-avatar">{c.name.charAt(0)}</span><span><strong>{c.name}</strong><small>{c.timezone}</small></span><span className="nogna-more">⋮</span></button>)}{!loading&&!companies.length&&<div className="nogna-list-empty">No companies yet.</div>}<button className="nogna-create-company" onClick={onCreate}>＋ Create company</button></aside><section className="nogna-company-detail"><div className="nogna-company-title"><div className="nogna-company-heading"><span className="nogna-company-avatar large">{selected?.name?.charAt(0)||'N'}</span><div><h1>{selected?.name||'My Company'}</h1><p>Active profile</p></div><ChevronDown size={17}/></div><span className="nogna-more">⋮</span></div><nav className="nogna-tabs"><button className="is-active">Company</button><button disabled>Address</button><button disabled>Contact</button><button disabled>History</button></nav><div className="nogna-company-fields"><Field label="Company name" value={selected?.name||''} required/><Field label="Workspace slug" value={selected?.slug||''}/><Field label="Base currency" value={selected?.base_currency||''}/><Field label="Timezone" value={selected?.timezone||''}/><Field label="Workspace owner" value={selected?.role==='owner'?'Owner':''}/></div></section></div>;
 }
 function Field({label,value,required}:{label:string;value:string;required?:boolean}) { return <label className="nogna-field"><span>{label}{required&&<em> *</em>}</span><input value={value} readOnly/></label>; }
 function Placeholder({title,text}:{title:string;text:string}) { return <div className="nogna-placeholder"><h1>{title}</h1><p>{text}</p></div>; }
+
+function CompanyCreateForm({value,onChange,onCancel,onCreated}:{value:any;onChange:(v:any)=>void;onCancel:()=>void;onCreated:(c:Company)=>void}) {
+  const [error,setError]=useState('');
+  const save=()=>api('/companies',{method:'POST',body:JSON.stringify(value)}).then(r=>onCreated(r.data)).catch(e=>setError(e.message));
+  return <div className="nogna-overlay"><div className="nogna-dialog"><h1>Create company</h1><p>Set up the workspace for your business.</p>{['name','slug','base_currency','timezone'].map(key=><label className="nogna-field" key={key}><span>{key.replace('_',' ')}</span><input value={value[key]} onChange={e=>onChange({...value,[key]:e.target.value})}/></label>)}{error&&<div className="nogna-customer-notice is-error">{error}</div>}<div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={onCancel}>Cancel</button><button className="nogna-save-button" onClick={save}>Create company</button></div></div></div>;
+}
 
 function CustomerView({company}:{company:Company|null}) {
   const [customers,setCustomers]=useState<any[]>([]);
