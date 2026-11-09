@@ -90,8 +90,13 @@ final class InvoiceController
 
     private function save_document(int $invoice_id, \WP_REST_Request $request): bool
     {
-        global $wpdb; $sections=$request->get_param('sections');
-        if (!is_array($sections)) return true;
+        global $wpdb;
+        $sections = $request->get_param('sections');
+        if (!is_array($sections)) {
+            $json = $request->get_json_params();
+            $sections = is_array($json['sections'] ?? null) ? $json['sections'] : [];
+        }
+        if (!is_array($sections)) return false;
         $st=$wpdb->prefix.'nogna_invoice_sections'; $it=$wpdb->prefix.'nogna_invoice_items';
         $wpdb->delete($st,['invoice_id'=>$invoice_id]); $wpdb->delete($it,['invoice_id'=>$invoice_id]);
         foreach($sections as $si=>$section){
