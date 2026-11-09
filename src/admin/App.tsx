@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Building2, ChevronDown, CircleUserRound, HelpCircle, Home, Settings, UsersRound } from 'lucide-react';
+import { Building2, ChevronDown, ChevronLeft, CircleUserRound, HelpCircle, Home, Settings, UsersRound } from 'lucide-react';
 
 type Company = { id: number; name: string; slug: string; base_currency: string; timezone: string; role?: string };
 declare global { interface Window { NognaReact?: { restUrl: string; nonce: string } } }
@@ -19,6 +19,7 @@ export default function App() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selected, setSelected] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     api('/companies').then((response) => {
@@ -28,25 +29,33 @@ export default function App() {
     }).finally(() => setLoading(false));
   }, []);
 
+  const title = section === 'company' ? 'My Company' : section === 'customers' ? 'Customers' : 'Home';
+
   return (
-    <div className="nogna-app">
+    <div className={'nogna-app' + (collapsed ? ' is-sidebar-collapsed' : '')}>
       <header className="nogna-app-header">
-        <div className="nogna-breadcrumb"><span className="nogna-back">‹</span><Building2 size={17} /> <span>{section === 'company' ? 'My Company' : section === 'customers' ? 'Customers' : 'Home'}</span></div>
+        <div className="nogna-header-title">
+          <button className="nogna-sidebar-toggle" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+            <ChevronLeft size={18} />
+          </button>
+          <Building2 size={17} />
+          <span>{title}</span>
+        </div>
         <div className="nogna-header-actions"><HelpCircle size={17} /><CircleUserRound size={17} /></div>
       </header>
       <div className="nogna-app-body">
         <aside className="nogna-app-sidebar">
           <div className="nogna-logo"><span>↗</span><div>NOGNA<small>Billing</small></div></div>
-          <button className={section === 'home' ? 'is-active' : ''} onClick={() => setSection('home')}><Home size={18} />Home</button>
+          <button className={section === 'home' ? 'is-active' : ''} onClick={() => setSection('home')}><Home size={18} /><span className="nogna-nav-text">Home</span></button>
           <div className="nogna-sidebar-label">MASTER DATA</div>
-          <button className={section === 'customers' ? 'is-active' : ''} onClick={() => setSection('customers')}><UsersRound size={18} />Customers</button>
-          <button className={section === 'company' ? 'is-active' : ''} onClick={() => setSection('company')}><Building2 size={18} />My Company</button>
+          <button className={section === 'customers' ? 'is-active' : ''} onClick={() => setSection('customers')}><UsersRound size={18} /><span className="nogna-nav-text">Customers</span></button>
+          <button className={section === 'company' ? 'is-active' : ''} onClick={() => setSection('company')}><Building2 size={18} /><span className="nogna-nav-text">My Company</span></button>
           <div className="nogna-company-account">
             <button className="nogna-company-switcher" onClick={() => setSection('company')}>
               <span className="nogna-company-avatar">{selected?.name?.charAt(0) || 'N'}</span>
-              <span><small>Workspace</small><strong>{selected?.name || 'No workspace'}</strong></span><ChevronDown size={15} />
+              <span className="nogna-nav-text"><small>Workspace</small><strong>{selected?.name || 'No workspace'}</strong></span><ChevronDown size={15} />
             </button>
-            <div className="nogna-account-tools"><button><Settings size={16} />Settings</button><span className="nogna-online"></span><CircleUserRound size={17} /></div>
+            <div className="nogna-account-tools"><button><Settings size={16} /><span className="nogna-nav-text">Settings</span></button><span className="nogna-online"></span><CircleUserRound size={17} /></div>
           </div>
         </aside>
         <main className="nogna-app-main">
