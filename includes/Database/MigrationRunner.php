@@ -138,6 +138,7 @@ final class MigrationRunner
         dbDelta("CREATE TABLE {$invoice_items} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             invoice_id bigint(20) unsigned NOT NULL,
+            section_id bigint(20) unsigned NULL,
             description varchar(255) NOT NULL,
             quantity decimal(20,6) NOT NULL DEFAULT 1,\n            units decimal(20,6) NOT NULL DEFAULT 1,\n            days decimal(20,6) NOT NULL DEFAULT 1,
             unit_price decimal(20,6) NOT NULL DEFAULT 0,
