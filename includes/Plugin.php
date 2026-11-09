@@ -51,7 +51,10 @@ final class Plugin
         $items_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $items)) === $items;
         $section_id_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'section_id'));
         $unit_cost_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'unit_cost'));
-        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists) {
+        $group_id_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'group_id'));
+        $group_parent_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'is_group_parent'));
+        $remarks_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'remarks'));
+        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists) {
             (new MigrationRunner())->run();
         }
     }
