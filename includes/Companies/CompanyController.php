@@ -14,11 +14,6 @@ final class CompanyController
                 'permission_callback' => [$this, 'is_authenticated'],
             ],
             [
-                'methods' => 'PUT, PATCH',
-                'callback' => [$this, 'update'],
-                'permission_callback' => [$this, 'can_manage'],
-            ],
-            [
                 'methods' => 'POST',
                 'callback' => [$this, 'store'],
                 'permission_callback' => [$this, 'is_authenticated'],
@@ -43,6 +38,12 @@ final class CompanyController
                     ],
                 ],
             ],
+        ]);
+
+        register_rest_route('nogna/v1', '/companies/(?P<id>\\d+)', [
+            'methods' => 'PUT, PATCH',
+            'callback' => [$this, 'update'],
+            'permission_callback' => [$this, 'can_manage'],
         ]);
     }
 
