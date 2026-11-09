@@ -139,14 +139,19 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const [customers,setCustomers]=useState<any[]>([]);
   const [editing,setEditing]=useState<any|null>(null);
   const [message,setMessage]=useState('');
+  const [past,setPast]=useState<any[]>([]);
+  const [future,setFuture]=useState<any[]>([]);
   const emptySection=()=>({name:'',units_multiplier:1,hide_header:false,items:[{description:'',units:1,days:1,unit_cost:0,group_id:'',is_group_parent:false}]});
   const [draft,setDraft]=useState<any>({document_type:'invoice',document_number:'',customer_id:'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});
+  const commitDraft=(next:any)=>{setPast(prev=>[...prev,draft].slice(-50));setFuture([]);setDraft(next);};
+  const undo=()=>{if(!past.length)return;const previous=past[past.length-1];setPast(past.slice(0,-1));setFuture([draft,...future]);setDraft(previous);};
+  const redo=()=>{if(!future.length)return;const next=future[0];setFuture(future.slice(1));setPast([...past,draft].slice(-50));setDraft(next);};
   const load=()=>{if(!company)return;Promise.all([api('/companies/'+company.id+'/invoices'),api('/companies/'+company.id+'/customers')]).then(([a,b])=>{setInvoices(a.data||[]);setCustomers(b.data||[])}).catch(e=>setMessage(e.message));};
   useEffect(()=>{load();},[company]);
-  const start=()=>{setMessage('');setDraft({document_type:'invoice',document_number:'',customer_id:customers[0]?.id||'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});setEditing({new:true});};
-  const save=()=>{if(!company||!draft.customer_id){setMessage('Select a customer before saving.');return;}const path=editing?.new?'/companies/'+company.id+'/invoices':'/companies/'+company.id+'/invoices/'+editing.id;api(path,{method:editing?.new?'POST':'PUT',body:JSON.stringify(draft)}).then(r=>{setEditing(r.data);setDraft(r.data);setMessage('Draft saved');load()}).catch(e=>setMessage(e.message));};
-  const updateSection=(si:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i===si?{...s,[key]:value}:s)});
-  const updateItem=(si:number,ii:number,key:string,value:any)=>setDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i!==si?s:{...s,items:s.items.map((x:any,j:number)=>j===ii?{...x,[key]:value}:x)})});
+  const start=()=>{setMessage('');setPast([]);setFuture([]);setDraft({document_type:'invoice',document_number:'',customer_id:customers[0]?.id||'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});setEditing({new:true});};
+  const save=()=>{if(!company||!draft.customer_id){setMessage('Select a customer before saving.');return;}const path=editing?.new?'/companies/'+company.id+'/invoices':'/companies/'+company.id+'/invoices/'+editing.id;api(path,{method:editing?.new?'POST':'PUT',body:JSON.stringify(draft)}).then(r=>{setEditing(r.data);setPast([]);setFuture([]);setDraft(r.data);setMessage('Draft saved');load()}).catch(e=>setMessage(e.message));};
+  const updateSection=(si:number,key:string,value:any)=>commitDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i===si?{...s,[key]:value}:s)});
+  const updateItem=(si:number,ii:number,key:string,value:any)=>commitDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i!==si?s:{...s,items:s.items.map((x:any,j:number)=>j===ii?{...x,[key]:value}:x)})});
   const isOwner=(item:any)=>item.is_group_parent===true || Number(item.is_group_parent)===1;
   const sectionSubtotal=(s:any)=>{const groups:any={};let total=0;s.items.forEach((x:any)=>{if(x.group_id && isOwner(x)) groups[x.group_id]=x;});s.items.forEach((x:any)=>{if(x.group_id && groups[x.group_id]) return;total+=(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);});Object.values(groups).forEach((x:any)=>{total+=(Number(x.days)||0)*(Number(x.unit_cost)||0);});return total;};
   const showUnits=appearance.invoice_show_units !== '0';
@@ -167,7 +172,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   if(editing)return <div className="nogna-invoice-editor">
     <div className="nogna-page-heading">
       <div><p className="nogna-home-eyebrow">INCOME / NEW DOCUMENT</p><h1>{draft.document_type==='quote'?'Quote':'Invoice'} {draft.document_number&&'· '+draft.document_number}</h1></div>
-      <div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
+      <div className="nogna-invoice-toolbar"><button className="nogna-secondary-button" disabled={!past.length} onClick={undo}>Undo</button><button className="nogna-secondary-button" disabled={!future.length} onClick={redo}>Redo</button><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
     </div>
     {message&&<div className={"nogna-customer-notice "+(/saved/i.test(message) ? "is-success" : "is-error")}>{message}</div>}
     <div className="nogna-settings-card">
@@ -190,7 +195,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
       return <section className="nogna-settings-card nogna-invoice-section" key={si}>
         <div className="nogna-panel-heading">
           <div><h2>{s.name||`Section ${si+1}`}</h2><p className="nogna-settings-help">Enter the details for this section. Repeat it when the same items apply elsewhere.</p></div>
-          <button className="nogna-secondary-button" onClick={()=>setDraft({...draft,sections:draft.sections.filter((_:any,i:number)=>i!==si)})}>Remove section</button>
+          <button className="nogna-secondary-button" onClick={()=>commitDraft({...draft,sections:draft.sections.filter((_:any,i:number)=>i!==si)})}>Remove section</button>
         </div>
         <div className="nogna-settings-grid">
           <label className="nogna-field"><span>Section name</span><input value={s.name} onChange={e=>updateSection(si,'name',e.target.value)} placeholder="Example: Design & Strategy"/></label>
@@ -226,5 +231,5 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
     <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
 
-  return <div className="nogna-invoice-list"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">INCOME</p><h1>Invoices</h1></div><button className="nogna-save-button" onClick={start}>＋ New invoice</button></div>{message&&<div className="nogna-customer-notice is-error">{message}</div>}<div className="nogna-settings-card nogna-invoice-table">{invoices.length?<>{invoices.map(inv=><button className="nogna-invoice-row" key={inv.id} onClick={()=>{setDraft({...inv,sections:inv.sections||[emptySection()]});setEditing(inv)}}><span><strong>{inv.invoice_number}</strong><small>{inv.customer_name||'No customer'}</small></span><span>{inv.currency} {Number(inv.total||0).toFixed(2)}</span><em>{inv.status}</em></button>)}</>:<div className="nogna-empty-state"><p>No invoices yet. Create the first draft from this screen.</p></div>}</div></div>;
+  return <div className="nogna-invoice-list"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">INCOME</p><h1>Invoices</h1></div><button className="nogna-save-button" onClick={start}>＋ New invoice</button></div>{message&&<div className="nogna-customer-notice is-error">{message}</div>}<div className="nogna-settings-card nogna-invoice-table">{invoices.length?<>{invoices.map(inv=><button className="nogna-invoice-row" key={inv.id} onClick={()=>{setPast([]);setFuture([]);setDraft({...inv,sections:inv.sections||[emptySection()]});setEditing(inv)}}><span><strong>{inv.invoice_number}</strong><small>{inv.customer_name||'No customer'}</small></span><span>{inv.currency} {Number(inv.total||0).toFixed(2)}</span><em>{inv.status}</em></button>)}</>:<div className="nogna-empty-state"><p>No invoices yet. Create the first draft from this screen.</p></div>}</div></div>;
 }
