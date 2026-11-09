@@ -14,6 +14,11 @@ final class CompanyController
                 'permission_callback' => [$this, 'is_authenticated'],
             ],
             [
+                'methods' => 'PUT, PATCH',
+                'callback' => [$this, 'update'],
+                'permission_callback' => [$this, 'can_manage'],
+            ],
+            [
                 'methods' => 'POST',
                 'callback' => [$this, 'store'],
                 'permission_callback' => [$this, 'is_authenticated'],
