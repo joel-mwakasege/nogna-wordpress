@@ -102,7 +102,10 @@ final class InvoiceController
             }
         }
         $this->recalculate($invoice_id);
-        return true;
+        $stored_sections = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$st} WHERE invoice_id=%d", $invoice_id));
+        $expected_items = 0; foreach ($sections as $section) { $expected_items += count((array) ($section['items'] ?? [])); }
+        $stored_items = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$it} WHERE invoice_id=%d", $invoice_id));
+        return $stored_sections === count($sections) && $stored_items === $expected_items;
     }
 
     private function recalculate(int $id): void
