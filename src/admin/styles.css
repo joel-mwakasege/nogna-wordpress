@@ -436,3 +436,7 @@ html,body{overflow-x:hidden}
 .nogna-invoice-totals strong{color:var(--nogna-text);font-weight:600}
 .nogna-invoice-totals .is-grand-total{margin-top:8px;padding-top:14px;border-top:2px solid var(--nogna-accent);color:var(--nogna-text);font-size:18px}
 .nogna-invoice-totals .is-grand-total strong{font-size:20px;color:var(--nogna-accent)}
+
+.nogna-invoice-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nogna-invoice-toolbar button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:640px){.nogna-invoice-toolbar{width:100%}.nogna-invoice-toolbar button{flex:1}}
