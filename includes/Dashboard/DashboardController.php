@@ -45,6 +45,10 @@ final class DashboardController
             return '<div class="nogna-login-required">Please log in to access your Nogna dashboard.</div>';
         }
 
+        if (file_exists(NOGNA_BILLING_DIR . 'assets/build/nogna-admin.js')) {
+            return '<div id="nogna-react-root"></div>';
+        }
+
         ob_start();
         ?>
         <div id="nogna-dashboard" class="nogna-dashboard onboarding-active">
@@ -282,6 +286,17 @@ final class DashboardController
     public function enqueue_assets(): void
     {
         if (!is_singular() || !has_shortcode((string) get_post_field('post_content', get_queried_object_id()), 'nogna_dashboard')) {
+            return;
+        }
+
+        if (file_exists(NOGNA_BILLING_DIR . 'assets/build/nogna-admin.js')) {
+            wp_enqueue_style('nogna-react-admin', NOGNA_BILLING_URL . 'assets/build/nogna-admin.css', [], NOGNA_BILLING_VERSION);
+            wp_enqueue_script('nogna-react-admin', NOGNA_BILLING_URL . 'assets/build/nogna-admin.js', [], NOGNA_BILLING_VERSION, true);
+            wp_script_add_data('nogna-react-admin', 'strategy', 'defer');
+            wp_localize_script('nogna-react-admin', 'NognaReact', [
+                'restUrl' => esc_url_raw(rest_url('nogna/v1')),
+                'nonce' => wp_create_nonce('wp_rest'),
+            ]);
             return;
         }
 
