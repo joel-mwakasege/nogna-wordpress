@@ -194,7 +194,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
         <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span className={showUnits ? "" : "is-hidden"}>{unitsLabel}</span><span className={showDays ? "" : "is-hidden"}>{daysLabel}</span><span className={showAmount ? "" : "is-hidden"}>{amountLabel}</span><span>Group</span><span>Line total</span><span></span></div>
         {s.items.map((x:any,ii:number)=>{
           const groupItems=x.group_id ? s.items.filter((item:any)=>item.group_id===x.group_id) : [];
-          const owner=groupItems.find((item:any)=>item.is_group_parent) || groupItems[0];
+          const owner=groupItems.find((item:any)=>item.is_group_parent);
           const grouped=Boolean(x.group_id && owner);
           const sharedDays=grouped ? Number(owner.days)||0 : Number(x.days)||0;
           const sharedAmount=grouped ? Number(owner.unit_cost)||0 : Number(x.unit_cost)||0;
