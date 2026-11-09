@@ -52,7 +52,8 @@ final class InvoiceController
         ]);
         if (!$ok) return $this->error('The document could not be created.',500);
         $id=(int)$wpdb->insert_id;
-        $this->save_document($id,$request);
+        $saved = $this->save_document($id,$request);
+        if (!$saved) return $this->error('The invoice details could not be saved. Please run the plugin database update.',500);
         return new \WP_REST_Response(['data'=>$this->load($company,$id)],201);
     }
 
@@ -70,7 +71,9 @@ final class InvoiceController
         $data=[]; foreach($allowed as $key){ if($request->get_param($key)!==null) $data[$key]=$key==='customer_id'?(int)$request->get_param($key):sanitize_text_field((string)$request->get_param($key)); }
         $data['updated_at']=current_time('mysql');
         if ($data) $wpdb->update($wpdb->prefix.'nogna_invoices',$data,['id'=>$id,'company_id'=>$company]);
-        $this->save_document($id,$request); $this->recalculate($id);
+        $saved = $this->save_document($id,$request);
+        if (!$saved) return $this->error('The invoice details could not be saved. Please run the plugin database update.',500);
+        $this->recalculate($id);
         return new \WP_REST_Response(['data'=>$this->load($company,$id)]);
     }
 
