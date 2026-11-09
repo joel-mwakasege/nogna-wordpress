@@ -139,7 +139,7 @@ function InvoiceView({company}:{company:Company|null}) {
   const [customers,setCustomers]=useState<any[]>([]);
   const [editing,setEditing]=useState<any|null>(null);
   const [message,setMessage]=useState('');
-  const emptySection=()=>({name:'',units_multiplier:1,hide_header:false,items:[{description:'',units:1,days:1,unit_cost:0}]});
+  const emptySection=()=>({name:'',units_multiplier:1,hide_header:false,items:[{description:'',units:1,days:1,unit_cost:0,group_id:'',is_group_parent:false}]});
   const [draft,setDraft]=useState<any>({document_type:'invoice',document_number:'',customer_id:'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});
   const load=()=>{if(!company)return;Promise.all([api('/companies/'+company.id+'/invoices'),api('/companies/'+company.id+'/customers')]).then(([a,b])=>{setInvoices(a.data||[]);setCustomers(b.data||[])}).catch(e=>setMessage(e.message));};
   useEffect(()=>{load();},[company]);
@@ -184,19 +184,21 @@ function InvoiceView({company}:{company:Company|null}) {
           <label className="nogna-field"><span>Room / section name</span><input value={s.name} onChange={e=>updateSection(si,'name',e.target.value)} placeholder="Example: Room 1"/></label>
           <label className="nogna-field"><span>How many identical rooms?</span><input type="number" min="1" step="1" value={s.units_multiplier} onChange={e=>updateSection(si,'units_multiplier',Number(e.target.value))}/><small className="nogna-field-help">The room subtotal is multiplied by this number.</small></label>
         </div>
-        <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span>Units</span><span>Days</span><span>Unit amount</span><span>Line total</span><span></span></div>
+        <div className="nogna-group-help">To share one cost across several items, give them the same group name and mark one row as the cost owner. Units and days remain editable for every item.</div>
+        <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span>Units</span><span>Days</span><span>Unit amount</span><span>Group</span><span>Line total</span><span></span></div>
         {s.items.map((x:any,ii:number)=>{
           const line=(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);
           return <div className="nogna-invoice-line" key={ii}>
             <label><span>Item / equipment</span><input value={x.description} placeholder="Example: Projector" onChange={e=>updateItem(si,ii,'description',e.target.value)}/></label>
-            <label><span>Units</span><input type="number" min="0" step="0.01" value={x.units} onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/></label>
-            <label><span>Days</span><input type="number" min="0" step="0.01" value={x.days} onChange={e=>updateItem(si,ii,'days',Number(e.target.value))}/></label>
-            <label><span>Unit amount</span><input type="number" min="0" step="0.01" value={x.unit_cost} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
+            <label><span>Units</span><input type="number" min="0" step="0.01" value={x.units ?? 1} onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/></label>
+            <label><span>Days</span><input type="number" min="0" step="0.01" value={x.days ?? 1} onChange={e=>updateItem(si,ii,'days',Number(e.target.value))}/></label>
+            <label><span>Unit amount</span><input type="number" min="0" step="0.01" value={x.unit_cost ?? 0} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
+            <label><span>Group name</span><input value={x.group_id||''} placeholder="Optional" onChange={e=>updateItem(si,ii,'group_id',e.target.value)}/><small><input type="checkbox" checked={!!x.is_group_parent} onChange={e=>updateItem(si,ii,'is_group_parent',e.target.checked)}/> Cost owner</small></label>
             <strong className="nogna-line-total">{money(line)}</strong>
             <button className="nogna-secondary-button" aria-label="Remove item" onClick={()=>updateSection(si,'items',s.items.filter((_:any,j:number)=>j!==ii))}>×</button>
           </div>;
         })}
-        <button className="nogna-create-company" onClick={()=>updateSection(si,'items',[...s.items,{description:'',units:1,days:1,unit_cost:0}])}>＋ Add item / equipment</button>
+        <button className="nogna-create-company" onClick={()=>updateSection(si,'items',[...s.items,{description:'',units:1,days:1,unit_cost:0,group_id:'',is_group_parent:false}])}>＋ Add item / equipment</button>
         <div className="nogna-section-total"><span>Room subtotal: <strong>{money(subtotal)}</strong></span><span>× {Number(s.units_multiplier)||1} identical room{Number(s.units_multiplier)===1?'':'s'} = <strong>{money(multiplied)}</strong></span></div>
       </section>;
     })}
