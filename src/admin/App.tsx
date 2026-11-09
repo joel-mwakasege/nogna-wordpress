@@ -180,8 +180,8 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
         <label className="nogna-field"><span>Currency</span><input value={draft.currency} onChange={e=>setDraft({...draft,currency:e.target.value.toUpperCase()})}/></label>
         <label className="nogna-field"><span>Issue date</span><input type="date" value={draft.issue_date} onChange={e=>setDraft({...draft,issue_date:e.target.value})}/></label>
         <label className="nogna-field"><span>Payment terms / notes</span><input value={draft.administrative_notes||''} onChange={e=>setDraft({...draft,administrative_notes:e.target.value})}/></label>
-        <label className="nogna-field"><span>Discount percentage</span><input type="number" min="0" step="0.01" value={draft.discount_percent||0} onChange={e=>setDraft({...draft,discount_percent:Number(e.target.value)})}/></label>
-        <label className="nogna-field"><span>Tax percentage</span><input type="number" min="0" step="0.01" value={draft.tax_percent||0} onChange={e=>setDraft({...draft,tax_percent:Number(e.target.value)})}/></label>
+        <label className="nogna-field"><span>Discount percentage</span><input type="number" min="0" max="100" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(draft.discount_percent)||0))} onChange={e=>setDraft({...draft,discount_percent:Math.max(0,Math.min(100,parseInt(e.target.value,10)||0))})}/></label>
+        <label className="nogna-field"><span>Tax percentage</span><input type="number" min="0" max="100" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(draft.tax_percent)||0))} onChange={e=>setDraft({...draft,tax_percent:Math.max(0,Math.min(100,parseInt(e.target.value,10)||0))})}/></label>
       </div>
     </div>
     {draft.sections.map((s:any,si:number)=>{
