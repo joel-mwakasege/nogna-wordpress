@@ -138,3 +138,19 @@ button { cursor: pointer; }
  .nogna-tabs{gap:18px;overflow-x:auto;padding:0 17px}
  .nogna-company-fields{grid-template-columns:1fr;padding:20px 17px}
 }
+
+/* Keep the application shell inside the available viewport */
+html, body { overflow:hidden; }
+.nogna-app { height:calc(100vh - 32px); min-height:0; overflow:hidden; }
+.nogna-app-body { height:calc(100% - 64px); min-height:0; overflow:hidden; }
+.nogna-app-sidebar { height:100%; min-height:0; overflow:hidden; }
+.nogna-app-main { min-height:0; overflow:auto; }
+@media(max-width:782px) {
+  .nogna-app { height:calc(100vh - 46px); }
+}
+@media(max-width:760px) {
+  html, body { overflow:auto; }
+  .nogna-app { height:auto; min-height:100vh; overflow:visible; }
+  .nogna-app-body { height:auto; min-height:calc(100vh - 58px); overflow:visible; }
+  .nogna-app-main { overflow:visible; }
+}
