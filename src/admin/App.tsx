@@ -193,12 +193,19 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
         <div className="nogna-group-help">To share one cost across several items, give them the same group name and mark one row as the cost owner. Units and days remain editable for every item.</div>
         <div className="nogna-invoice-table-labels"><span>Item / equipment detail</span><span className={showUnits ? "" : "is-hidden"}>{unitsLabel}</span><span className={showDays ? "" : "is-hidden"}>{daysLabel}</span><span className={showAmount ? "" : "is-hidden"}>{amountLabel}</span><span>Group</span><span>Line total</span><span></span></div>
         {s.items.map((x:any,ii:number)=>{
-          const line=(Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);
-          return <div className="nogna-invoice-line" key={ii}>
+          const groupItems=x.group_id ? s.items.filter((item:any)=>item.group_id===x.group_id) : [];
+          const owner=groupItems.find((item:any)=>item.is_group_parent) || groupItems[0];
+          const grouped=Boolean(x.group_id && owner);
+          const sharedDays=grouped ? Number(owner.days)||0 : Number(x.days)||0;
+          const sharedAmount=grouped ? Number(owner.unit_cost)||0 : Number(x.unit_cost)||0;
+          const line=grouped ? sharedDays*sharedAmount : (Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);
+          const ownerIndex=grouped ? s.items.indexOf(owner) : -1;
+          const controlsShared=grouped && ownerIndex===ii;
+          return <div className={`nogna-invoice-line${grouped ? ' is-grouped' : ''}`} key={ii}>
             <label><span>Item / equipment</span><input value={x.description} placeholder="Example: Projector" onChange={e=>updateItem(si,ii,'description',e.target.value)}/></label>
             <label className={showUnits ? "" : "is-hidden"}><span>{unitsLabel}</span><input type="number" min="0" step="0.01" value={x.units ?? 1} onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/></label>
-            <label className={showDays ? "" : "is-hidden"}><span>{daysLabel}</span><input type="number" min="0" step="0.01" value={x.days ?? 1} onChange={e=>updateItem(si,ii,'days',Number(e.target.value))}/></label>
-            <label className={showAmount ? "" : "is-hidden"}><span>{amountLabel}</span><input type="number" min="0" step="0.01" value={x.unit_cost ?? 0} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
+            <label className={showDays ? "" : "is-hidden"}><span>{daysLabel}{grouped ? ' (shared)' : ''}</span><input type="number" min="0" step="0.01" value={sharedDays} disabled={grouped && !controlsShared} title={grouped && !controlsShared ? 'Controlled by the cost owner' : undefined} onChange={e=>updateItem(si,ii,'days',Number(e.target.value))}/></label>
+            <label className={showAmount ? "" : "is-hidden"}><span>{amountLabel}{grouped ? ' (shared)' : ''}</span><input type="number" min="0" step="0.01" value={sharedAmount} disabled={grouped && !controlsShared} title={grouped && !controlsShared ? 'Controlled by the cost owner' : undefined} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
             <label><span>Group name</span><input value={x.group_id||''} placeholder="Optional" onChange={e=>updateItem(si,ii,'group_id',e.target.value)}/><small><input type="checkbox" checked={!!x.is_group_parent} onChange={e=>updateItem(si,ii,'is_group_parent',e.target.checked)}/> Cost owner</small></label>
             <strong className="nogna-line-total">{money(line)}</strong>
             <button className="nogna-secondary-button" aria-label="Remove item" onClick={()=>updateSection(si,'items',s.items.filter((_:any,j:number)=>j!==ii))}>×</button>
