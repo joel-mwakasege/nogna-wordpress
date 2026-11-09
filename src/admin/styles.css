@@ -423,3 +423,6 @@ html,body{overflow-x:hidden}
 
 .is-hidden{display:none!important}
 .nogna-settings-card .nogna-setting-input select{height:40px;box-sizing:border-box}
+
+.nogna-invoice-line input:disabled{opacity:.62;cursor:not-allowed;background:#1c1c1c}
+.nogna-invoice-line.is-grouped{padding-left:10px;border-left:2px solid var(--nogna-accent)}
