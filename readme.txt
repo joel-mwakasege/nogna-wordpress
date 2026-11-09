@@ -19,3 +19,20 @@ The plugin foundation is being built incrementally.
 * Server-side calculations and permissions.
 * Multiple company workspaces with strict isolation.
 * No Supabase dependency for core functionality.
+
+
+== Installation ==
+
+See the complete installation guide:
+
+https://github.com/joel-mwakasege/nogna-wordpress/blob/main/INSTALLATION.md
+
+The guide covers:
+
+* Installing a ready-built plugin ZIP.
+* Building the React frontend from source.
+* Creating the upload ZIP.
+* Local Docker installation.
+* First-use setup.
+* Updating the plugin.
+* Troubleshooting.
