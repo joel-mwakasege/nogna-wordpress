@@ -29,6 +29,7 @@ final class Plugin
 
     private function register_hooks(): void
     {
+        $this->ensure_invoice_schema();
         add_action('rest_api_init', [$this, 'register_rest_routes']);
         (new DashboardController())->register();
     }
@@ -39,6 +40,19 @@ final class Plugin
         (new MigrationRunner())->run();
         $this->create_dashboard_page();
         update_option('nogna_billing_version', NOGNA_BILLING_VERSION, false);
+    }
+
+    private function ensure_invoice_schema(): void
+    {
+        global $wpdb;
+        $sections = $wpdb->prefix . 'nogna_invoice_sections';
+        $items = $wpdb->prefix . 'nogna_invoice_items';
+        $sections_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $sections)) === $sections;
+        $items_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $items)) === $items;
+        $section_id_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'section_id'));
+        if (!$sections_exists || !$section_id_exists) {
+            (new MigrationRunner())->run();
+        }
     }
 
     private function deactivate_plugin(): void
