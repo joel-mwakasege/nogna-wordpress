@@ -191,3 +191,12 @@ html, body { overflow:hidden; }
 .nogna-color-field input[type=color]{width:42px;height:38px;padding:3px;border:1px solid var(--nogna-border);border-radius:7px;background:#242424}
 .nogna-settings-help{margin:18px 0 0;color:var(--nogna-muted);font-size:12px}
 @media(max-width:760px){.nogna-settings-heading{align-items:flex-start;gap:16px;flex-direction:column}.nogna-settings-heading h1{font-size:25px}.nogna-settings-card{padding:19px 17px}.nogna-settings-grid{grid-template-columns:1fr}.nogna-setting-input.wide{grid-column:auto}.nogna-color-field{grid-template-columns:1fr 42px 1fr}}
+
+
+.nogna-setting-input select{width:100%;padding:10px 11px;border:1px solid var(--nogna-border);border-radius:7px;background:#242424;color:var(--nogna-text)}
+.nogna-logo-picker{display:flex;gap:8px}
+.nogna-logo-picker input{flex:1}
+.nogna-logo-picker button{padding:0 14px;border:1px solid var(--nogna-border);border-radius:7px;background:#303030;color:var(--nogna-text);white-space:nowrap}
+.nogna-logo-picker button:hover{background:#3b3b3b}
+.nogna-logo img{width:28px;height:28px;object-fit:contain;border-radius:7px}
+@media(max-width:760px){.nogna-logo-picker{display:grid}.nogna-logo-picker button{height:38px}}
