@@ -274,3 +274,25 @@ html,body{overflow-x:hidden}
   .nogna-company-view,.nogna-customer-view{grid-template-columns:210px minmax(0,1fr)}
   .nogna-app-main{padding:20px 16px}
 }
+
+
+/* Robust constrained layout for resized desktop windows */
+#nogna-react-root{width:100%;max-width:100vw;overflow:hidden}
+@media (max-width:960px) and (min-width:761px){
+  .nogna-app{width:100%;max-width:100vw;overflow:hidden}
+  .nogna-app-main{min-width:0;width:calc(100vw - 72px);padding:20px 16px;overflow-x:hidden}
+  .nogna-app-sidebar{width:72px;flex-basis:72px;padding:20px 8px}
+  .nogna-logo{justify-content:center;padding-left:0;padding-right:0}
+  .nogna-logo>div,.nogna-nav-text,.nogna-sidebar-label{display:none}
+  .nogna-app-sidebar>button{justify-content:center;padding-left:0;padding-right:0}
+  .nogna-company-switcher{justify-content:center;padding-left:0;padding-right:0}
+  .nogna-company-switcher>svg,.nogna-account-tools>svg{display:none}
+  .nogna-account-tools{justify-content:center}
+  .nogna-account-tools button{flex:0 0 auto;padding:8px!important}
+  .nogna-company-view,.nogna-customer-view{display:block;width:100%;min-width:0;min-height:0;overflow:hidden}
+  .nogna-company-list,.nogna-customer-list{max-height:270px;border-right:0;border-bottom:1px solid #353535}
+  .nogna-company-detail,.nogna-customer-detail{width:100%;min-width:0;border-top:0}
+  .nogna-company-fields{grid-template-columns:1fr 1fr;padding:20px 18px}
+  .nogna-company-title{padding:18px}
+  .nogna-tabs{overflow-x:auto;white-space:nowrap}
+}
