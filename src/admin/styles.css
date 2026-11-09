@@ -430,3 +430,9 @@ html,body{overflow-x:hidden}
 .nogna-invoice-editor>.nogna-customer-notice{margin:0 0 20px}
 
 .nogna-invoice-bottom-actions{display:flex;justify-content:flex-end;gap:10px;margin:24px 0 8px;padding-top:18px;border-top:1px solid var(--nogna-border)}
+
+.nogna-invoice-totals{max-width:420px;margin:24px 0 0 auto;padding:16px 0 0;border-top:1px solid var(--nogna-border)}
+.nogna-invoice-totals>div{display:flex;justify-content:space-between;gap:24px;padding:7px 0;color:var(--nogna-muted);font-size:13px}
+.nogna-invoice-totals strong{color:var(--nogna-text);font-weight:600}
+.nogna-invoice-totals .is-grand-total{margin-top:8px;padding-top:14px;border-top:2px solid var(--nogna-accent);color:var(--nogna-text);font-size:18px}
+.nogna-invoice-totals .is-grand-total strong{font-size:20px;color:var(--nogna-accent)}
