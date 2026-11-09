@@ -46,6 +46,7 @@ final class DashboardController
         }
 
         if (file_exists(NOGNA_BILLING_DIR . 'assets/build/nogna-admin.js')) {
+            wp_enqueue_media();
             return '<div id="nogna-react-root"></div>';
         }
 
