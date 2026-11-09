@@ -235,3 +235,8 @@ html, body { overflow:hidden; }
 .nogna-danger-button{padding:10px 14px;border:1px solid #71383d;border-radius:8px;background:#3b2024;color:#ffb0b6}
 .nogna-danger-button:hover{background:#51282e}
 @media(max-width:760px){.nogna-customer-actions{display:none}}
+
+
+.nogna-settings-notice{padding:10px 14px;border:1px solid;border-radius:8px;font-size:13px}
+.nogna-settings-notice.is-success{border-color:#287b58;background:#173d2d;color:#8be0b5}
+.nogna-settings-notice.is-error{border-color:#8d3d42;background:#401f24;color:#ffb0b6}
