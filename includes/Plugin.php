@@ -7,6 +7,7 @@ use Nogna\Billing\Companies\CompanyController;
 use Nogna\Billing\Customers\CustomerController;
 use Nogna\Billing\Database\MigrationRunner;
 use Nogna\Billing\Dashboard\DashboardController;
+use Nogna\Billing\Settings\SettingsController;
 
 final class Plugin
 {
