@@ -31,6 +31,11 @@ final class InvoiceController
         global $wpdb;
         $company=(int)$request['company_id']; $table=$wpdb->prefix.'nogna_invoices';
         $rows=$wpdb->get_results($wpdb->prepare("SELECT i.*, c.name customer_name, c.email customer_email FROM {$table} i LEFT JOIN {$wpdb->prefix}nogna_customers c ON c.id=i.customer_id WHERE i.company_id=%d AND i.deleted_at IS NULL ORDER BY i.created_at DESC",$company), ARRAY_A);
+        foreach ($rows as &$row) {
+            $full = $this->load($company, (int) $row['id']);
+            $row['sections'] = $full['sections'] ?? [];
+        }
+        unset($row);
         return new \WP_REST_Response(['data'=>$rows]);
     }
 
