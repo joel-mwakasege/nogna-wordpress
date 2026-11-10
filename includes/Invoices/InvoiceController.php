@@ -42,6 +42,10 @@ final class InvoiceController
         foreach ($rows as &$row) {
             $full = $this->load($company, (int) $row['id']);
             $row['sections'] = $full['sections'] ?? [];
+            $row['payments'] = $full['payments'] ?? [];
+            $row['amount_paid'] = $full['amount_paid'] ?? 0;
+            $row['balance_due'] = $full['balance_due'] ?? max(0, (float) $row['total'] - (float) $row['amount_paid']);
+            $row['status'] = $full['status'] ?? $row['status'];
         }
         unset($row);
         return new \WP_REST_Response(['data'=>$rows]);
