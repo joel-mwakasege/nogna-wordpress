@@ -172,7 +172,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   if(editing)return <div className="nogna-invoice-editor">
     <div className="nogna-page-heading">
       <div><p className="nogna-home-eyebrow">INCOME / NEW DOCUMENT</p><h1>{draft.document_type==='quote'?'Quote':'Invoice'} {draft.document_number&&'· '+draft.document_number}</h1></div>
-      <div className="nogna-invoice-toolbar"><button className="nogna-secondary-button" disabled={!past.length} onClick={undo}>Undo</button><button className="nogna-secondary-button" disabled={!future.length} onClick={redo}>Redo</button><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
+      <div className="nogna-invoice-toolbar"><button className="nogna-secondary-button" disabled={!past.length} onClick={undo}>Undo</button><button className="nogna-secondary-button" disabled={!future.length} onClick={redo}>Redo</button><button className="nogna-secondary-button" onClick={()=>{setEditing(null);setMessage('')}}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
     </div>
     {message&&<div className={"nogna-customer-notice "+(/saved/i.test(message) ? "is-success" : "is-error")}>{message}</div>}
     <div className="nogna-settings-card">
@@ -207,14 +207,15 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
           const groupItems=x.group_id ? s.items.filter((item:any)=>item.group_id===x.group_id) : [];
           const owner=groupItems.find((item:any)=>isOwner(item));
           const grouped=Boolean(x.group_id && owner);
+          const sharedUnits=grouped ? Math.max(0,Math.round(Number(owner.units)||0)) : Math.max(0,Math.round(Number(x.units)||0));
           const sharedDays=grouped ? Number(owner.days)||0 : Number(x.days)||0;
           const sharedAmount=grouped ? Number(owner.unit_cost)||0 : Number(x.unit_cost)||0;
-          const line=grouped ? sharedDays*sharedAmount : (Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);
+          const line=grouped ? sharedUnits*sharedDays*sharedAmount : (Number(x.units)||0)*(Number(x.days)||0)*(Number(x.unit_cost)||0);
           const ownerIndex=grouped ? s.items.indexOf(owner) : -1;
           const controlsShared=grouped && ownerIndex===ii;
           return <div className={`nogna-invoice-line${grouped ? ' is-grouped' : ''}`} key={ii}>
             <label><span>Item / equipment</span><input value={x.description} placeholder="Example: Projector" onChange={e=>updateItem(si,ii,'description',e.target.value)}/></label>
-            <label className={showUnits ? "" : "is-hidden"}><span>{unitsLabel}</span><input type="number" min="0" step="0.01" value={x.units ?? 1} onChange={e=>updateItem(si,ii,'units',Number(e.target.value))}/></label>
+            <label className={showUnits ? "" : "is-hidden"}><span>{unitsLabel}</span><input type="number" min="0" step="1" inputMode="numeric" value={Math.max(0,Math.round(Number(x.units)||0))} onChange={e=>updateItem(si,ii,'units',Math.max(0,parseInt(e.target.value,10)||0))}/></label>
             <label className={showDays ? "" : "is-hidden"}><span>{daysLabel}{grouped ? ' (shared)' : ''}</span><input type="number" min="0" step="1" inputMode="numeric" value={sharedDays} disabled={grouped && !controlsShared} title={grouped && !controlsShared ? 'Controlled by the cost owner' : undefined} onChange={e=>updateItem(si,ii,'days',Math.max(0,parseInt(e.target.value,10)||0))}/></label>
             <label className={showAmount ? "" : "is-hidden"}><span>{amountLabel}{grouped ? ' (shared)' : ''}</span><input type="number" min="0" step="0.01" value={sharedAmount} disabled={grouped && !controlsShared} title={grouped && !controlsShared ? 'Controlled by the cost owner' : undefined} onChange={e=>updateItem(si,ii,'unit_cost',Number(e.target.value))}/></label>
             <label><span>Group name</span><input value={x.group_id||''} placeholder="Optional" onChange={e=>updateItem(si,ii,'group_id',e.target.value)}/><small><input type="checkbox" checked={isOwner(x)} onChange={e=>updateItem(si,ii,'is_group_parent',e.target.checked)}/> Cost owner</small></label>
@@ -228,7 +229,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
     })}
     <button className="nogna-create-company" onClick={()=>commitDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
     <div className="nogna-invoice-totals"><div><span>Subtotal</span><strong>{money(baseSubtotal)}</strong></div><div><span>Discount</span><strong>- {money(discountTotal)}</strong></div><div><span>Tax</span><strong>{money(taxTotal)}</strong></div><div className="is-grand-total"><span>Grand total</span><strong>{money(grandTotal)}</strong></div></div>
-    <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>setEditing(null)}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
+    <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>{setEditing(null);setMessage('')}}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
 
   return <div className="nogna-invoice-list"><div className="nogna-page-heading"><div><p className="nogna-home-eyebrow">INCOME</p><h1>Invoices</h1></div><button className="nogna-save-button" onClick={start}>＋ New invoice</button></div>{message&&<div className="nogna-customer-notice is-error">{message}</div>}<div className="nogna-settings-card nogna-invoice-table">{invoices.length?<>{invoices.map(inv=><button className="nogna-invoice-row" key={inv.id} onClick={()=>{setPast([]);setFuture([]);setDraft({...inv,sections:inv.sections||[emptySection()]});setEditing(inv)}}><span><strong>{inv.invoice_number}</strong><small>{inv.customer_name||'No customer'}</small></span><span>{inv.currency} {Number(inv.total||0).toFixed(2)}</span><em>{inv.status}</em></button>)}</>:<div className="nogna-empty-state"><p>No invoices yet. Create the first draft from this screen.</p></div>}</div></div>;
