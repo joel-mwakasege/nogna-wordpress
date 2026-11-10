@@ -108,7 +108,7 @@ final class InvoiceController
             if (!$wpdb->insert($st,['invoice_id'=>$invoice_id,'name'=>sanitize_text_field((string)($section['name']??'')),'units_multiplier'=>max(1, (int)round((float)($section['units_multiplier']??1))),'hide_header'=>empty($section['hide_header'])?0:1,'sort_order'=>$si,'created_at'=>current_time('mysql', true)])) { return false; }
             $section_id=(int)$wpdb->insert_id;
             foreach((array)($section['items']??[]) as $ii=>$item){
-                if (!$wpdb->insert($it,['invoice_id'=>$invoice_id,'section_id'=>$section_id,'description'=>sanitize_text_field((string)($item['description']??'')),'units'=>(float)($item['units']??1),'days'=>max(0, (int)round((float)($item['days']??1))),'unit_cost'=>(float)($item['unit_cost']??0),'group_id'=>sanitize_text_field((string)($item['group_id']??'')),'is_group_parent'=>empty($item['is_group_parent'])?0:1,'remarks'=>sanitize_textarea_field((string)($item['remarks']??'')),'sort_order'=>$ii])) { return false; }
+                if (!$wpdb->insert($it,['invoice_id'=>$invoice_id,'section_id'=>$section_id,'description'=>sanitize_text_field((string)($item['description']??'')),'units'=>max(0, (int)round((float)($item['units']??1))),'days'=>max(0, (int)round((float)($item['days']??1))),'unit_cost'=>(float)($item['unit_cost']??0),'group_id'=>sanitize_text_field((string)($item['group_id']??'')),'is_group_parent'=>empty($item['is_group_parent'])?0:1,'remarks'=>sanitize_textarea_field((string)($item['remarks']??'')),'sort_order'=>$ii])) { return false; }
             }
         }
         $this->recalculate($invoice_id);
@@ -122,7 +122,7 @@ final class InvoiceController
     {
         global $wpdb; $st=$wpdb->prefix.'nogna_invoice_sections'; $it=$wpdb->prefix.'nogna_invoice_items'; $inv=$wpdb->prefix.'nogna_invoices';
         $sections=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$st} WHERE invoice_id=%d ORDER BY sort_order,id",$id),ARRAY_A); $subtotal=0;
-        foreach($sections as $s){$items=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$it} WHERE section_id=%d ORDER BY sort_order,id",(int)$s['id']),ARRAY_A);$groups=[];$sum=0;foreach($items as $x){if($x['group_id'] && !empty($x['is_group_parent'])){$groups[$x['group_id']]=$x;}} foreach($items as $x){if($x['group_id'] && isset($groups[$x['group_id']])){continue;} $sum+=(float)$x['units']*(float)$x['days']*(float)$x['unit_cost'];} foreach($groups as $x){$sum+=(float)$x['days']*(float)$x['unit_cost'];}$subtotal += $sum*(float)($s['units_multiplier']?:1);}
+        foreach($sections as $s){$items=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$it} WHERE section_id=%d ORDER BY sort_order,id",(int)$s['id']),ARRAY_A);$groups=[];$sum=0;foreach($items as $x){if($x['group_id'] && !empty($x['is_group_parent'])){$groups[$x['group_id']]=$x;}} foreach($items as $x){if($x['group_id'] && isset($groups[$x['group_id']])){continue;} $sum+=(float)$x['units']*(float)$x['days']*(float)$x['unit_cost'];} foreach($groups as $x){$sum+=(float)$x['units']*(float)$x['days']*(float)$x['unit_cost'];}$subtotal += $sum*(float)($s['units_multiplier']?:1);}
         $row=$wpdb->get_row($wpdb->prepare("SELECT discount_percent,tax_percent FROM {$inv} WHERE id=%d",$id),ARRAY_A);$discount=$subtotal*(float)($row['discount_percent']??0)/100;$tax=($subtotal-$discount)*(float)($row['tax_percent']??0)/100;$wpdb->update($inv,['subtotal'=>$subtotal,'discount_total'=>$discount,'tax_total'=>$tax,'total'=>$subtotal-$discount+$tax,'updated_at'=>current_time('mysql')],['id'=>$id]);
     }
 
