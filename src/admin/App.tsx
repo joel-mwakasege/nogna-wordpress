@@ -143,6 +143,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const [future,setFuture]=useState<any[]>([]);
   const emptySection=()=>({name:'',units_multiplier:1,hide_header:false,items:[{description:'',units:1,days:1,unit_cost:0,group_id:'',is_group_parent:false}]});
   const [draft,setDraft]=useState<any>({document_type:'invoice',document_number:'',customer_id:'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});
+  const [payment,setPayment]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),payment_method:'Bank transfer',reference:'',notes:''});
   const commitDraft=(next:any)=>{setPast(prev=>[...prev,draft].slice(-50));setFuture([]);setDraft(next);};
   const undo=()=>{if(!past.length)return;const previous=past[past.length-1];setPast(past.slice(0,-1));setFuture([draft,...future]);setDraft(previous);};
   const redo=()=>{if(!future.length)return;const next=future[0];setFuture(future.slice(1));setPast([...past,draft].slice(-50));setDraft(next);};
@@ -150,6 +151,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   useEffect(()=>{load();},[company]);
   const start=()=>{setMessage('');setPast([]);setFuture([]);setDraft({document_type:'invoice',document_number:'',customer_id:customers[0]?.id||'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});setEditing({new:true});};
   const save=()=>{if(!company||!draft.customer_id){setMessage('Select a customer before saving.');return;}const path=editing?.new?'/companies/'+company.id+'/invoices':'/companies/'+company.id+'/invoices/'+editing.id;api(path,{method:editing?.new?'POST':'PUT',body:JSON.stringify(draft)}).then(r=>{setEditing(r.data);setPast([]);setFuture([]);setDraft(r.data);setMessage('Draft saved');load()}).catch(e=>setMessage(e.message));};
+  const recordPayment=()=>{if(!editing||editing.new)return;const amount=Number(payment.amount);if(!amount||amount<=0){setMessage('Enter a payment amount.');return;}api('/companies/'+company!.id+'/invoices/'+editing.id+'/payments',{method:'POST',body:JSON.stringify(payment)}).then(r=>{setEditing(r.data);setDraft(r.data);setPayment({amount:'',payment_date:new Date().toISOString().slice(0,10),payment_method:'Bank transfer',reference:'',notes:''});setMessage('Payment recorded');load()}).catch(e=>setMessage(e.message));};
   const updateSection=(si:number,key:string,value:any)=>commitDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i===si?{...s,[key]:value}:s)});
   const updateItem=(si:number,ii:number,key:string,value:any)=>commitDraft({...draft,sections:draft.sections.map((s:any,i:number)=>i!==si?s:{...s,items:s.items.map((x:any,j:number)=>j===ii?{...x,[key]:value}:x)})});
   const isOwner=(item:any)=>item.is_group_parent===true || Number(item.is_group_parent)===1;
@@ -229,6 +231,19 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
     })}
     <button className="nogna-create-company" onClick={()=>commitDraft({...draft,sections:[...draft.sections,emptySection()]})}>＋ Add another section</button>
     <div className="nogna-invoice-totals"><div><span>Subtotal</span><strong>{money(baseSubtotal)}</strong></div><div><span>Discount</span><strong>- {money(discountTotal)}</strong></div><div><span>Tax</span><strong>{money(taxTotal)}</strong></div><div className="is-grand-total"><span>Grand total</span><strong>{money(grandTotal)}</strong></div></div>
+    {editing&&!editing.new&&<section className="nogna-settings-card nogna-payment-card">
+      <div className="nogna-panel-heading"><div><h2>Payments</h2><p className="nogna-settings-help">Record payments received for this invoice.</p></div><strong className="nogna-payment-status">{draft.status==='paid'?'Paid':draft.status==='partially_paid'?'Partially paid':draft.status==='overdue'?'Overdue':'Unpaid'}</strong></div>
+      <div className="nogna-payment-summary"><div><span>Invoice total</span><strong>{money(Number(draft.total||grandTotal))}</strong></div><div><span>Paid</span><strong>{money(Number(draft.amount_paid||0))}</strong></div><div><span>Balance due</span><strong>{money(Number(draft.balance_due ?? Math.max(0,Number(draft.total||grandTotal)-Number(draft.amount_paid||0))))}</strong></div></div>
+      {Number(draft.balance_due ?? 0)>0&&<div className="nogna-payment-form">
+        <label className="nogna-field"><span>Amount received</span><input type="number" min="0.01" step="0.01" value={payment.amount} onChange={e=>setPayment({...payment,amount:e.target.value})}/></label>
+        <label className="nogna-field"><span>Payment date</span><input type="date" value={payment.payment_date} onChange={e=>setPayment({...payment,payment_date:e.target.value})}/></label>
+        <label className="nogna-field"><span>Payment method</span><select value={payment.payment_method} onChange={e=>setPayment({...payment,payment_method:e.target.value})}><option>Bank transfer</option><option>Cash</option><option>Mobile money</option><option>Card</option><option>Other</option></select></label>
+        <label className="nogna-field"><span>Reference</span><input value={payment.reference} onChange={e=>setPayment({...payment,reference:e.target.value})} placeholder="Optional reference"/></label>
+        <label className="nogna-field"><span>Notes</span><input value={payment.notes} onChange={e=>setPayment({...payment,notes:e.target.value})} placeholder="Optional note"/></label>
+        <button className="nogna-save-button" onClick={recordPayment}>Record payment</button>
+      </div>}
+      {Array.isArray(draft.payments)&&draft.payments.length>0&&<div className="nogna-payment-history"><h3>Payment history</h3>{draft.payments.map((p:any)=><div className="nogna-payment-row" key={p.id}><span>{p.payment_date}<small>{p.payment_method}{p.reference?' · '+p.reference:''}</small></span><strong>{money(Number(p.amount)||0)}</strong></div>)}</div>}
+    </section>}
     <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>{setEditing(null);setMessage('')}}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
 
