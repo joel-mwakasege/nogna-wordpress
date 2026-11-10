@@ -188,7 +188,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
     </div>
     {message&&<div className={"nogna-customer-notice "+(/saved/i.test(message) ? "is-success" : "is-error")}>{message}</div>}
     <div className="nogna-settings-card">
-      <div className="nogna-panel-heading"><div><h2>Document details</h2><p className="nogna-settings-help">Choose who this document is for and set its basic billing information.</p></div><div className="nogna-document-status"><strong>{draft.status==='paid'?'Paid':draft.status==='partially_paid'?'Partially paid':draft.status==='overdue'?'Overdue':'Unpaid'}</strong></div></div>
+      <div className="nogna-panel-heading nogna-document-details-heading"><div><h2>Document details</h2><p className="nogna-settings-help">Choose who this document is for and set its basic billing information.</p></div><div className="nogna-document-status"><small>Payment status</small><strong>{draft.status==='paid'?'Paid':draft.status==='partially_paid'?'Partially paid':draft.status==='overdue'?'Overdue':'Unpaid'}</strong></div></div>
       <div className="nogna-settings-grid">
         <label className="nogna-field"><span>Document type</span><select value={draft.document_type} onChange={e=>commitDraft({...draft,document_type:e.target.value})}><option value="invoice">Invoice</option><option value="quote">Quote</option></select></label>
         <label className="nogna-field"><span>Customer</span><select value={draft.customer_id} onChange={e=>commitDraft({...draft,customer_id:Number(e.target.value)})}><option value="">Select customer</option>{customers.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
