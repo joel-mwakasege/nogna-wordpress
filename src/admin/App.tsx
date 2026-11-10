@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Building2, FileText, ChevronDown, ChevronLeft, CircleUserRound, HelpCircle, Home, Settings, UsersRound } from 'lucide-react';
+import { Building2, FileText, ChevronDown, ChevronLeft, CircleUserRound, HelpCircle, Home, Pencil, Settings, Trash2, UsersRound } from 'lucide-react';
 
 type Section = 'home' | 'company' | 'customers' | 'invoices' | 'settings';
 type Company = { id: number; name: string; slug: string; base_currency: string; timezone: string; role?: string };
@@ -175,6 +175,8 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const taxableTotal=baseSubtotal-discountTotal;
   const taxTotal=taxableTotal*(Number(draft.tax_percent)||0)/100;
   const grandTotal=taxableTotal+taxTotal;
+  const paidTotal=(draft.payments||[]).reduce((sum:number,p:any)=>sum+(Number(p.amount)||0),0);
+  const balanceDue=Math.max(0,grandTotal-paidTotal);
   const money=(value:number)=>`${draft.currency||company?.base_currency||'USD'} ${value.toFixed(2)}`;
 
   if(!company)return <div className="nogna-placeholder"><h1>Invoices</h1><p>Create a workspace before creating invoices.</p></div>;
@@ -240,16 +242,16 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
     <div className="nogna-invoice-totals"><div><span>Subtotal</span><strong>{money(baseSubtotal)}</strong></div><div><span>Discount</span><strong>- {money(discountTotal)}</strong></div><div><span>Tax</span><strong>{money(taxTotal)}</strong></div><div className="is-grand-total"><span>Grand total</span><strong>{money(grandTotal)}</strong></div></div>
     {editing&&!editing.new&&<section className="nogna-settings-card nogna-payment-card">
       <div className="nogna-panel-heading"><div><h2>Payments</h2><p className="nogna-settings-help">Record payments received for this invoice.</p></div><button className="nogna-save-button" onClick={()=>{setShowPaymentForm(true);setPaymentNotice('')}}>{showPaymentForm?'Add another payment':'Record payment'}</button></div>
-      <div className="nogna-payment-summary"><div><span>Invoice total</span><strong>{money(Number(draft.total||grandTotal))}</strong></div><div><span>Paid</span><strong>{money(Number(draft.amount_paid||0))}</strong></div><div><span>Balance due</span><strong>{money(Number(draft.balance_due ?? Math.max(0,Number(draft.total||grandTotal)-Number(draft.amount_paid||0))))}</strong></div></div>
+      <div className="nogna-payment-summary"><div><span>Invoice total</span><strong>{money(grandTotal)}</strong></div><div><span>Paid</span><strong>{money(paidTotal)}</strong></div><div><span>Balance due</span><strong>{money(balanceDue)}</strong></div></div>
       {showPaymentForm&&<div className="nogna-payment-form-wrap"><div className="nogna-payment-form-header"><strong>{paymentId?'Update payment':'Record payment'}</strong><button className="nogna-icon-button" aria-label="Close payment form" onClick={resetPaymentForm}>×</button></div>{paymentNotice&&<div className={"nogna-customer-notice "+(/recorded|updated/i.test(paymentNotice)?'is-success':'is-error')}>{paymentNotice}</div>}<div className="nogna-payment-form">
         <label className="nogna-field"><span>Amount received</span><input id="nogna-payment-amount" type="number" min="0.01" step="0.01" value={payment.amount} onChange={e=>setPayment({...payment,amount:e.target.value})}/></label>
         <label className="nogna-field"><span>Payment date</span><input type="date" value={payment.payment_date} onChange={e=>setPayment({...payment,payment_date:e.target.value})}/></label>
         <label className="nogna-field"><span>Payment method</span><select value={payment.payment_method} onChange={e=>setPayment({...payment,payment_method:e.target.value})}><option>Bank transfer</option><option>Cash</option><option>Mobile money</option><option>Card</option><option>Other</option></select></label>
         <label className="nogna-field"><span>Reference</span><input value={payment.reference} onChange={e=>setPayment({...payment,reference:e.target.value})} placeholder="Optional reference"/></label>
         <label className="nogna-field"><span>Notes</span><input value={payment.notes} onChange={e=>setPayment({...payment,notes:e.target.value})} placeholder="Optional note"/></label>
-        <div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={resetPaymentForm}>Cancel</button><button className="nogna-secondary-button" onClick={resetPaymentForm}>Back to invoice</button><button className="nogna-save-button" onClick={recordPayment}>{paymentId?'Update payment':'Save payment'}</button></div>
+        <div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={resetPaymentForm}>Cancel</button><button className="nogna-save-button" onClick={recordPayment}>{paymentId?'Update payment':'Save payment'}</button></div>
       </div></div>}
-      {Array.isArray(draft.payments)&&draft.payments.length>0&&<div className="nogna-payment-history"><h3>Payment history</h3>{draft.payments.map((p:any)=><button className="nogna-payment-row" key={p.id} onClick={()=>editPayment(p)}><span>{p.payment_date}<small>{p.payment_method}{p.reference?' · '+p.reference:''}</small></span><strong>{money(Number(p.amount)||0)}</strong></button>)}</div>}
+      {Array.isArray(draft.payments)&&draft.payments.length>0&&<div className="nogna-payment-history"><h3>Payment history</h3>{draft.payments.map((p:any)=><div className="nogna-payment-row" key={p.id} onClick={()=>editPayment(p)}><span>{p.payment_date}<small>{p.payment_method}{p.reference?' · '+p.reference:''}</small></span><strong>{money(Number(p.amount)||0)}</strong><span className="nogna-payment-actions"><button aria-label="Edit payment" title="Edit payment" onClick={e=>{e.stopPropagation();editPayment(p)}}><Pencil size={16}/></button><button aria-label="Delete payment" title="Delete payment" onClick={e=>{e.stopPropagation();if(!window.confirm('Delete this payment?'))return;api('/companies/'+company!.id+'/invoices/'+editing!.id+'/payments/'+p.id,{method:'DELETE'}).then(r=>{setEditing(r.data);setDraft(r.data);setPaymentNotice('Payment deleted');setShowPaymentForm(false);load()}).catch(e=>setPaymentNotice(e.message))}}><Trash2 size={16}/></button></span></div>)}</div>}
     </section>}
     <div className="nogna-invoice-bottom-actions"><button className="nogna-secondary-button" onClick={()=>{setEditing(null);setMessage('')}}>Back</button><button className="nogna-save-button" onClick={save}>Save draft</button></div>
   </div>;
