@@ -14,6 +14,10 @@ final class InvoiceController
             ['methods'=>'GET','callback'=>[$this,'index'],'permission_callback'=>[$this,'can_access']],
             ['methods'=>'POST','callback'=>[$this,'store'],'permission_callback'=>[$this,'can_access']],
         ]);
+        register_rest_route('nogna/v1', '/companies/(?P<company_id>\\d+)/invoices/(?P<invoice_id>\\d+)/payments', [
+            ['methods'=>'GET','callback'=>[$this,'payments'],'permission_callback'=>[$this,'can_access']],
+            ['methods'=>'POST','callback'=>[$this,'record_payment'],'permission_callback'=>[$this,'can_access']],
+        ]);
         register_rest_route('nogna/v1', '/companies/(?P<company_id>\d+)/invoices/(?P<invoice_id>\d+)', [
             ['methods'=>'GET','callback'=>[$this,'show'],'permission_callback'=>[$this,'can_access']],
             ['methods'=>'PUT, PATCH','callback'=>[$this,'update'],'permission_callback'=>[$this,'can_access']],
@@ -87,6 +91,36 @@ final class InvoiceController
         return new \WP_REST_Response(['data'=>$this->load($company,$id)]);
     }
 
+    public function payments(\WP_REST_Request $request): \WP_REST_Response
+    {
+        global $wpdb;
+        $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_payments WHERE invoice_id=%d AND deleted_at IS NULL ORDER BY payment_date DESC,id DESC",(int)$request['invoice_id']),ARRAY_A);
+        return new \WP_REST_Response(['data'=>$rows]);
+    }
+
+    public function record_payment(\WP_REST_Request $request): \WP_REST_Response
+    {
+        global $wpdb;
+        $company=(int)$request['company_id']; $invoice_id=(int)$request['invoice_id'];
+        $invoice=$this->load($company,$invoice_id);
+        if(!$invoice) return $this->error('Invoice not found.',404);
+        $amount=(float)$request->get_param('amount');
+        $remaining=max(0,(float)$invoice['total']-(float)$invoice['amount_paid']);
+        if($amount<=0) return $this->error('Payment amount must be greater than zero.',400);
+        if($amount>$remaining+0.000001) return $this->error('Payment cannot exceed the remaining balance.',400);
+        $ok=$wpdb->insert($wpdb->prefix.'nogna_invoice_payments',[
+            'invoice_id'=>$invoice_id,'amount'=>$amount,
+            'payment_date'=>sanitize_text_field((string)($request->get_param('payment_date')?:current_time('Y-m-d'))),
+            'payment_method'=>sanitize_text_field((string)$request->get_param('payment_method')),
+            'reference'=>sanitize_text_field((string)$request->get_param('reference')),
+            'notes'=>sanitize_textarea_field((string)$request->get_param('notes')),
+            'created_by'=>(int)get_current_user_id(),'created_at'=>current_time('mysql'),'updated_at'=>current_time('mysql')
+        ]);
+        if(!$ok) return $this->error('Payment could not be recorded.',500);
+        $this->recalculate($invoice_id);
+        return new \WP_REST_Response(['data'=>$this->load($company,$invoice_id)]);
+    }
+
     public function destroy(\WP_REST_Request $request): \WP_REST_Response
     {
         global $wpdb; $wpdb->update($wpdb->prefix.'nogna_invoices',['deleted_at'=>current_time('mysql'),'updated_at'=>current_time('mysql')],['id'=>(int)$request['invoice_id'],'company_id'=>(int)$request['company_id']]);
@@ -123,14 +157,17 @@ final class InvoiceController
         global $wpdb; $st=$wpdb->prefix.'nogna_invoice_sections'; $it=$wpdb->prefix.'nogna_invoice_items'; $inv=$wpdb->prefix.'nogna_invoices';
         $sections=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$st} WHERE invoice_id=%d ORDER BY sort_order,id",$id),ARRAY_A); $subtotal=0;
         foreach($sections as $s){$items=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$it} WHERE section_id=%d ORDER BY sort_order,id",(int)$s['id']),ARRAY_A);$groups=[];$sum=0;foreach($items as $x){if($x['group_id'] && !empty($x['is_group_parent'])){$groups[$x['group_id']]=$x;}} foreach($items as $x){if($x['group_id'] && isset($groups[$x['group_id']])){continue;} $sum+=(float)$x['units']*(float)$x['days']*(float)$x['unit_cost'];} foreach($groups as $x){$sum+=(float)$x['units']*(float)$x['days']*(float)$x['unit_cost'];}$subtotal += $sum*(float)($s['units_multiplier']?:1);}
-        $row=$wpdb->get_row($wpdb->prepare("SELECT discount_percent,tax_percent FROM {$inv} WHERE id=%d",$id),ARRAY_A);$discount=$subtotal*(float)($row['discount_percent']??0)/100;$tax=($subtotal-$discount)*(float)($row['tax_percent']??0)/100;$wpdb->update($inv,['subtotal'=>$subtotal,'discount_total'=>$discount,'tax_total'=>$tax,'total'=>$subtotal-$discount+$tax,'updated_at'=>current_time('mysql')],['id'=>$id]);
+        $paid=(float)$wpdb->get_var($wpdb->prepare("SELECT COALESCE(SUM(amount),0) FROM {$wpdb->prefix}nogna_invoice_payments WHERE invoice_id=%d AND deleted_at IS NULL",$id));
+        $row=$wpdb->get_row($wpdb->prepare("SELECT discount_percent,tax_percent,status,due_date FROM {$inv} WHERE id=%d",$id),ARRAY_A);$discount=$subtotal*(float)($row['discount_percent']??0)/100;$tax=($subtotal-$discount)*(float)($row['tax_percent']??0)/100;$total=$subtotal-$discount+$tax;
+        $status=$row['status']??'draft'; if($paid>0 && $paid+0.000001 >= $total) $status='paid'; elseif($paid>0) $status='partially_paid'; elseif($status!=='draft') $status=(!empty($row['due_date']) && $row['due_date']<current_time('Y-m-d'))?'overdue':'open';
+        $wpdb->update($inv,['subtotal'=>$subtotal,'discount_total'=>$discount,'tax_total'=>$tax,'total'=>$total,'amount_paid'=>$paid,'status'=>$status,'updated_at'=>current_time('mysql')],['id'=>$id]);
     }
 
     private function load(int $company,int $id): ?array
     {
         global $wpdb; $i=$wpdb->get_row($wpdb->prepare("SELECT i.*, c.name customer_name,c.email customer_email FROM {$wpdb->prefix}nogna_invoices i LEFT JOIN {$wpdb->prefix}nogna_customers c ON c.id=i.customer_id WHERE i.id=%d AND i.company_id=%d AND i.deleted_at IS NULL",$id,$company),ARRAY_A); if(!$i)return null;
         $sections=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_sections WHERE invoice_id=%d ORDER BY sort_order,id",$id),ARRAY_A); foreach($sections as &$s)$s['items']=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_items WHERE section_id=%d ORDER BY sort_order,id",(int)$s['id']),ARRAY_A);
-        $i['sections']=$sections; return $i;
+        $i['sections']=$sections; $i['amount_paid']=(float)($i['amount_paid']??0); $i['balance_due']=max(0,(float)$i['total']-$i['amount_paid']); $i['payments']=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_payments WHERE invoice_id=%d AND deleted_at IS NULL ORDER BY payment_date DESC,id DESC",$id),ARRAY_A); return $i;
     }
 
     private function error(string $message,int $status): \WP_REST_Response { return new \WP_REST_Response(['code'=>'nogna_invoice_error','message'=>$message],$status); }
