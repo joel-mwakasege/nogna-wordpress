@@ -169,6 +169,24 @@ final class MigrationRunner
             KEY invoice_sort (invoice_id, sort_order)
         ) {$charset};");
 
+        $payments = $wpdb->prefix . 'nogna_invoice_payments';
+
+        dbDelta("CREATE TABLE {$payments} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            invoice_id bigint(20) unsigned NOT NULL,
+            amount decimal(20,6) NOT NULL DEFAULT 0,
+            payment_date date NOT NULL,
+            payment_method varchar(80) NOT NULL DEFAULT '',
+            reference varchar(190) NOT NULL DEFAULT '',
+            notes text NULL,
+            created_by bigint(20) unsigned NOT NULL,
+            created_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            deleted_at datetime NULL,
+            PRIMARY KEY (id),
+            KEY invoice_payments (invoice_id, payment_date)
+        ) {$charset};");
+
         dbDelta("CREATE TABLE {$extensions} (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             slug varchar(100) NOT NULL,
