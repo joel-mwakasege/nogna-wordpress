@@ -46,6 +46,7 @@ final class DashboardController
         }
 
         if (file_exists(NOGNA_BILLING_DIR . 'assets/build/nogna-admin.js')) {
+            add_filter('script_loader_tag', [$this, 'module_script_tag'], 10, 3);
             wp_enqueue_media();
             return '<div id="nogna-react-root"><div class="nogna-app-loading">Loading Nogna…</div></div>';
         }
@@ -282,6 +283,14 @@ final class DashboardController
         </div>
         <?php
         return (string) ob_get_clean();
+    }
+
+    public function module_script_tag(string $tag, string $handle, string $src): string
+    {
+        if ($handle !== 'nogna-react-admin') {
+            return $tag;
+        }
+        return '<script type="module" src="' . esc_url($src) . '"></script>';
     }
 
     public function enqueue_assets(): void
