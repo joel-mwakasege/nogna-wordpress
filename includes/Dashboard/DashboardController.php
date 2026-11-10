@@ -47,7 +47,7 @@ final class DashboardController
 
         if (file_exists(NOGNA_BILLING_DIR . 'assets/build/nogna-admin.js')) {
             wp_enqueue_media();
-            return '<div id="nogna-react-root"></div>';
+            return '<div id="nogna-react-root"><div class="nogna-app-loading">Loading Nogna…</div></div>';
         }
 
         ob_start();
