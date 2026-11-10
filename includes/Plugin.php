@@ -54,7 +54,9 @@ final class Plugin
         $group_id_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'group_id'));
         $group_parent_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'is_group_parent'));
         $remarks_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'remarks'));
-        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists) {
+        $payments = $wpdb->prefix . 'nogna_invoice_payments';
+        $payments_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $payments)) === $payments;
+        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists || !$payments_exists) {
             (new MigrationRunner())->run();
         }
     }
