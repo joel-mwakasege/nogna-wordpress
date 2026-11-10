@@ -20,6 +20,7 @@ final class InvoiceController
         ]);
         register_rest_route('nogna/v1', '/companies/(?P<company_id>\\d+)/invoices/(?P<invoice_id>\\d+)/payments/(?P<payment_id>\\d+)', [
             ['methods'=>'PUT, PATCH','callback'=>[$this,'update_payment'],'permission_callback'=>[$this,'can_access']],
+            ['methods'=>'DELETE','callback'=>[$this,'delete_payment'],'permission_callback'=>[$this,'can_access']],
         ]);
         register_rest_route('nogna/v1', '/companies/(?P<company_id>\d+)/invoices/(?P<invoice_id>\d+)', [
             ['methods'=>'GET','callback'=>[$this,'show'],'permission_callback'=>[$this,'can_access']],
@@ -99,6 +100,18 @@ final class InvoiceController
         global $wpdb;
         $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_payments WHERE invoice_id=%d AND deleted_at IS NULL ORDER BY payment_date DESC,id DESC",(int)$request['invoice_id']),ARRAY_A);
         return new \WP_REST_Response(['data'=>$rows]);
+    }
+
+    public function delete_payment(\WP_REST_Request $request): \WP_REST_Response
+    {
+        global $wpdb;
+        $invoice_id=(int)$request['invoice_id']; $payment_id=(int)$request['payment_id'];
+        $payment=$wpdb->get_row($wpdb->prepare("SELECT id FROM {$wpdb->prefix}nogna_invoice_payments WHERE id=%d AND invoice_id=%d AND deleted_at IS NULL",$payment_id,$invoice_id),ARRAY_A);
+        if(!$payment) return $this->error('Payment not found.',404);
+        $ok=$wpdb->update($wpdb->prefix.'nogna_invoice_payments',['deleted_at'=>current_time('mysql'),'updated_at'=>current_time('mysql')],['id'=>$payment_id,'invoice_id'=>$invoice_id]);
+        if($ok===false) return $this->error('Payment could not be deleted.',500);
+        $this->recalculate($invoice_id);
+        return new \WP_REST_Response(['data'=>$this->load((int)$request['company_id'],$invoice_id)]);
     }
 
     public function update_payment(\WP_REST_Request $request): \WP_REST_Response
