@@ -479,3 +479,15 @@ html,body{overflow-x:hidden}
 
 /* Desktop invoice rows use the table header; field labels remain visible on mobile. */
 .nogna-invoice-line>label>span{display:none}@media(max-width:760px){.nogna-invoice-line>label>span{display:block}}
+
+/* One Remarks field: it is a note by default and becomes a combined-price group only when a cost owner exists. */
+.nogna-invoice-section.has-groups .nogna-invoice-table-labels,
+.nogna-invoice-section.has-groups .nogna-invoice-line,
+.nogna-invoice-section.no-groups .nogna-invoice-table-labels,
+.nogna-invoice-section.no-groups .nogna-invoice-line{grid-template-columns:minmax(180px,1fr) 70px 70px 105px 150px 125px 38px}
+@media(max-width:760px){
+.nogna-invoice-section.has-groups .nogna-invoice-table-labels,
+.nogna-invoice-section.has-groups .nogna-invoice-line,
+.nogna-invoice-section.no-groups .nogna-invoice-table-labels,
+.nogna-invoice-section.no-groups .nogna-invoice-line{grid-template-columns:1fr 70px 70px 105px 150px 125px 38px}
+}
