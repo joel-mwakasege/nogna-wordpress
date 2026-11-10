@@ -210,7 +210,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
     {draft.sections.map((s:any,si:number)=>{
       const subtotal=sectionSubtotal(s);
       const multiplied=subtotal*(Number(s.units_multiplier)||1);
-      return <section className="nogna-settings-card nogna-invoice-section" key={si}>
+      return <section className={`nogna-settings-card nogna-invoice-section ${groupsEnabled ? "has-groups" : "no-groups"}`} key={si}>
         <div className="nogna-panel-heading">
           <div><h2>{s.name||`Section ${si+1}`}</h2><p className="nogna-settings-help">Enter the details for this section. Repeat it when the same items apply elsewhere.</p></div>
           <button className="nogna-secondary-button" onClick={()=>commitDraft({...draft,sections:draft.sections.filter((_:any,i:number)=>i!==si)})}>Remove section</button>
