@@ -18,6 +18,9 @@ final class InvoiceController
             ['methods'=>'GET','callback'=>[$this,'payments'],'permission_callback'=>[$this,'can_access']],
             ['methods'=>'POST','callback'=>[$this,'record_payment'],'permission_callback'=>[$this,'can_access']],
         ]);
+        register_rest_route('nogna/v1', '/companies/(?P<company_id>\\d+)/invoices/(?P<invoice_id>\\d+)/payments/(?P<payment_id>\\d+)', [
+            ['methods'=>'PUT, PATCH','callback'=>[$this,'update_payment'],'permission_callback'=>[$this,'can_access']],
+        ]);
         register_rest_route('nogna/v1', '/companies/(?P<company_id>\d+)/invoices/(?P<invoice_id>\d+)', [
             ['methods'=>'GET','callback'=>[$this,'show'],'permission_callback'=>[$this,'can_access']],
             ['methods'=>'PUT, PATCH','callback'=>[$this,'update'],'permission_callback'=>[$this,'can_access']],
@@ -96,6 +99,30 @@ final class InvoiceController
         global $wpdb;
         $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_payments WHERE invoice_id=%d AND deleted_at IS NULL ORDER BY payment_date DESC,id DESC",(int)$request['invoice_id']),ARRAY_A);
         return new \WP_REST_Response(['data'=>$rows]);
+    }
+
+    public function update_payment(\WP_REST_Request $request): \WP_REST_Response
+    {
+        global $wpdb;
+        $company=(int)$request['company_id']; $invoice_id=(int)$request['invoice_id']; $payment_id=(int)$request['payment_id'];
+        $invoice=$this->load($company,$invoice_id);
+        if(!$invoice) return $this->error('Invoice not found.',404);
+        $payment=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}nogna_invoice_payments WHERE id=%d AND invoice_id=%d AND deleted_at IS NULL",$payment_id,$invoice_id),ARRAY_A);
+        if(!$payment) return $this->error('Payment not found.',404);
+        $amount=(float)$request->get_param('amount');
+        $other=(float)$wpdb->get_var($wpdb->prepare("SELECT COALESCE(SUM(amount),0) FROM {$wpdb->prefix}nogna_invoice_payments WHERE invoice_id=%d AND id<>%d AND deleted_at IS NULL",$invoice_id,$payment_id));
+        $remaining=max(0,(float)$invoice['total']-$other);
+        if($amount<=0) return $this->error('Payment amount must be greater than zero.',400);
+        if($amount>$remaining+0.000001) return $this->error('Payment cannot exceed the remaining balance.',400);
+        $ok=$wpdb->update($wpdb->prefix.'nogna_invoice_payments',[
+            'amount'=>$amount,'payment_date'=>sanitize_text_field((string)($request->get_param('payment_date')?:$payment['payment_date'])),
+            'payment_method'=>sanitize_text_field((string)$request->get_param('payment_method')),
+            'reference'=>sanitize_text_field((string)$request->get_param('reference')),
+            'notes'=>sanitize_textarea_field((string)$request->get_param('notes')),'updated_at'=>current_time('mysql')
+        ],['id'=>$payment_id,'invoice_id'=>$invoice_id]);
+        if($ok===false) return $this->error('Payment could not be updated.',500);
+        $this->recalculate($invoice_id);
+        return new \WP_REST_Response(['data'=>$this->load($company,$invoice_id)]);
     }
 
     public function record_payment(\WP_REST_Request $request): \WP_REST_Response
