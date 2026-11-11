@@ -22,6 +22,12 @@ final class InvoiceController
             ['methods'=>'PUT, PATCH','callback'=>[$this,'update_payment'],'permission_callback'=>[$this,'can_access']],
             ['methods'=>'DELETE','callback'=>[$this,'delete_payment'],'permission_callback'=>[$this,'can_access']],
         ]);
+        register_rest_route('nogna/v1', '/companies/(?P<company_id>\d+)/invoices/trash', [
+            ['methods'=>'GET','callback'=>[$this,'trash'],'permission_callback'=>[$this,'can_access']],
+        ]);
+        register_rest_route('nogna/v1', '/companies/(?P<company_id>\d+)/invoices/(?P<invoice_id>\d+)/restore', [
+            ['methods'=>'POST','callback'=>[$this,'restore'],'permission_callback'=>[$this,'can_access']],
+        ]);
         register_rest_route('nogna/v1', '/companies/(?P<company_id>\d+)/invoices/(?P<invoice_id>\d+)', [
             ['methods'=>'GET','callback'=>[$this,'show'],'permission_callback'=>[$this,'can_access']],
             ['methods'=>'PUT, PATCH','callback'=>[$this,'update'],'permission_callback'=>[$this,'can_access']],
@@ -164,6 +170,29 @@ final class InvoiceController
         if(!$ok) return $this->error('Payment could not be recorded.',500);
         $this->recalculate($invoice_id);
         return new \WP_REST_Response(['data'=>$this->load($company,$invoice_id)]);
+    }
+
+    public function trash(\WP_REST_Request $request): \WP_REST_Response
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'nogna_invoices';
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT i.*, c.name customer_name FROM {$table} i LEFT JOIN {$wpdb->prefix}nogna_customers c ON c.id=i.customer_id WHERE i.company_id=%d AND i.deleted_at IS NOT NULL ORDER BY i.deleted_at DESC",
+            (int) $request['company_id']
+        ), ARRAY_A);
+        return new \WP_REST_Response(['data' => $rows]);
+    }
+
+    public function restore(\WP_REST_Request $request): \WP_REST_Response
+    {
+        global $wpdb;
+        $updated = $wpdb->update(
+            $wpdb->prefix . 'nogna_invoices',
+            ['deleted_at' => null, 'updated_at' => current_time('mysql')],
+            ['id' => (int) $request['invoice_id'], 'company_id' => (int) $request['company_id']]
+        );
+        if ($updated === false) return $this->error('Invoice could not be restored.', 500);
+        return new \WP_REST_Response(['data' => ['restored' => true]]);
     }
 
     public function destroy(\WP_REST_Request $request): \WP_REST_Response
