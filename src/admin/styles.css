@@ -593,3 +593,8 @@ html,body{overflow-x:hidden}
 .nogna-payment-form-wrap > .nogna-customer-notice + .nogna-payment-form {
   margin-top: 0;
 }
+
+/* Invoice row actions remain visible and aligned in the action column. */
+.nogna-invoice-table td:last-child { white-space: nowrap; min-width: 96px; }
+.nogna-invoice-table td:last-child .nogna-ui-button { display: inline-flex; margin-left: 4px; color: var(--nogna-text); }
+.nogna-invoice-table td:last-child .nogna-ui-button:hover { color: var(--nogna-text); background: var(--nogna-elevated); }
