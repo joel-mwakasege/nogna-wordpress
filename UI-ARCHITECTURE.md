@@ -48,4 +48,6 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Migrate company, customer, tab, and logo-picker actions to Shadcn Button.
 - [x] Migrate invoice editing, grouping, PDF, print, and draft actions to Shadcn Button.
 - [x] Migrate payment form, payment history, invoice utility, search-clear, customer form, and settings action buttons.
-- [ ] Migrate remaining row/tab utility controls and validate all responsive layouts in the browser.
+- [x] Replace all native button controls in App.tsx with the shared Shadcn Button primitive.
+- [x] Replace all native select controls in App.tsx with the shared Shadcn Select primitive.
+- [ ] Validate the complete migrated UI in the browser at desktop, tablet, and mobile widths.
