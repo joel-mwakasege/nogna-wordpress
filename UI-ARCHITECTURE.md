@@ -42,4 +42,5 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Migrate high-visibility secondary actions to Shadcn Button.
 - [x] Wire the invoice list to the shared Table primitive.
 - [x] Wire the customer list to the shared Table primitive.
-- [ ] Finish remaining one-off secondary controls and validate all responsive table layouts.
+- [x] Add responsive overflow, spacing, hover, and alignment rules for shared tables.
+- [ ] Finish remaining one-off secondary controls and validate all responsive table layouts in the browser.
