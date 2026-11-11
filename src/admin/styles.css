@@ -563,7 +563,7 @@ html,body{overflow-x:hidden}
 .nogna-invoice-table th:nth-child(1),
 .nogna-invoice-table td:nth-child(1) { width: 44%; }
 .nogna-invoice-table th:nth-child(2),
-.nogna-invoice-table td:nth-child(2) { width: 22%; text-align: right; }
+.nogna-invoice-table td:nth-child(2) { width: 22%; text-align: left; }
 .nogna-invoice-table th:nth-child(3),
 .nogna-invoice-table td:nth-child(3) { width: 20%; }
 .nogna-invoice-table th:nth-child(4),
