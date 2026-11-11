@@ -598,3 +598,131 @@ html,body{overflow-x:hidden}
 .nogna-invoice-table td:last-child { white-space: nowrap; min-width: 96px; }
 .nogna-invoice-table td:last-child .nogna-ui-button { display: inline-flex; margin-left: 4px; color: var(--nogna-text); }
 .nogna-invoice-table td:last-child .nogna-ui-button:hover { color: var(--nogna-text); background: var(--nogna-elevated); }
+
+
+/* Navigation and list alignment: neutral, predictable states */
+.nogna-app-sidebar > button {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  width:100%;
+  min-height:42px;
+  margin:2px 0;
+  padding:0 14px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:var(--nogna-muted);
+  box-shadow:none;
+  font-size:var(--nogna-nav-font-size,14px);
+  line-height:1.2;
+}
+.nogna-app-sidebar > button:hover,
+.nogna-app-sidebar > button:focus-visible,
+.nogna-app-sidebar > button.is-active {
+  background:var(--nogna-elevated);
+  color:var(--nogna-text);
+  border-color:transparent;
+  box-shadow:none;
+  outline:none;
+}
+.nogna-app-sidebar > button svg { flex:0 0 auto; width:18px; height:18px; }
+.nogna-app-sidebar .nogna-company-switcher {
+  min-height:58px;
+  margin:0;
+  padding:8px 12px;
+  border:1px solid var(--nogna-border)!important;
+  background:var(--nogna-panel)!important;
+}
+.nogna-app-sidebar .nogna-company-switcher:hover,
+.nogna-app-sidebar .nogna-company-switcher:focus-visible {
+  background:var(--nogna-panel)!important;
+  box-shadow:none;
+}
+.nogna-app-sidebar .nogna-account-tools button {
+  min-height:36px;
+  margin:0;
+  padding:0 10px;
+}
+
+.nogna-customer-list .nogna-list-title {
+  min-height:48px;
+  padding:16px 14px 10px;
+  line-height:1.2;
+}
+.nogna-customer-search {
+  display:block;
+  width:calc(100% - 28px);
+  height:40px;
+  min-height:40px;
+  margin:0 14px 14px;
+  padding:0 11px;
+  box-sizing:border-box;
+  line-height:40px;
+  box-shadow:none;
+}
+.nogna-customer-search:focus,
+.nogna-customer-search:focus-visible {
+  outline:none;
+  box-shadow:none;
+  border-color:var(--nogna-border);
+}
+.nogna-customer-rows > div { overflow-x:hidden; }
+.nogna-customer-rows table { width:100%; min-width:0; table-layout:fixed; }
+.nogna-customer-rows .nogna-customer-row {
+  display:table-row;
+  width:auto;
+  padding:0;
+  border-left:0;
+  background:transparent;
+  box-shadow:none;
+}
+.nogna-customer-rows .nogna-customer-row:hover,
+.nogna-customer-rows .nogna-customer-row.is-selected {
+  background:var(--nogna-elevated);
+  border-left:0;
+  box-shadow:none;
+}
+.nogna-customer-rows .nogna-customer-row td {
+  padding:12px 14px;
+  vertical-align:middle;
+}
+.nogna-customer-rows .nogna-customer-row td:first-child { width:48px; }
+.nogna-customer-rows .nogna-customer-row td:nth-child(2) { min-width:0; }
+.nogna-customer-rows .nogna-customer-row td strong,
+.nogna-customer-rows .nogna-customer-row td small {
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Company selection is a data selection, not a blue navigation state. */
+.nogna-company-row {
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-height:64px;
+  width:100%;
+  padding:12px 15px;
+  border:0;
+  border-left:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--nogna-text);
+  text-align:left;
+  box-shadow:none;
+}
+.nogna-company-row:hover,
+.nogna-company-row:focus-visible,
+.nogna-company-row.is-selected {
+  border-left:0;
+  background:var(--nogna-elevated);
+  color:var(--nogna-text);
+  box-shadow:none;
+  outline:none;
+}
+.nogna-company-row .nogna-company-avatar { flex:0 0 auto; }
+.nogna-company-row .nogna-more { margin-left:auto; flex:0 0 auto; }
+.nogna-company-row strong,
+.nogna-company-row small { line-height:1.25; }
