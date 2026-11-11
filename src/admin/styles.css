@@ -553,3 +553,33 @@ html,body{overflow-x:hidden}
   .nogna-customer-rows th,
   .nogna-customer-rows td { padding: 10px 12px; }
 }
+
+
+/* Invoice list column alignment: header and body share fixed semantic columns */
+.nogna-invoice-table table { table-layout: fixed; }
+.nogna-invoice-table .nogna-invoice-row { display: table-row; width: auto; padding: 0; }
+.nogna-invoice-table th,
+.nogna-invoice-table td { box-sizing: border-box; }
+.nogna-invoice-table th:nth-child(1),
+.nogna-invoice-table td:nth-child(1) { width: 44%; }
+.nogna-invoice-table th:nth-child(2),
+.nogna-invoice-table td:nth-child(2) { width: 22%; text-align: right; }
+.nogna-invoice-table th:nth-child(3),
+.nogna-invoice-table td:nth-child(3) { width: 20%; }
+.nogna-invoice-table th:nth-child(4),
+.nogna-invoice-table td:nth-child(4) { width: 14%; text-align: right; }
+.nogna-invoice-table td:first-child { display: table-cell; }
+.nogna-invoice-table td:first-child strong,
+.nogna-invoice-table td:first-child small { text-align: left; }
+.nogna-invoice-table .nogna-invoice-row:hover { background: #2a2a2a; }
+@media (max-width: 760px) {
+  .nogna-invoice-table table { table-layout: auto; }
+  .nogna-invoice-table th:nth-child(1),
+  .nogna-invoice-table td:nth-child(1) { min-width: 220px; }
+  .nogna-invoice-table th:nth-child(2),
+  .nogna-invoice-table td:nth-child(2) { min-width: 130px; }
+  .nogna-invoice-table th:nth-child(3),
+  .nogna-invoice-table td:nth-child(3) { min-width: 130px; }
+  .nogna-invoice-table th:nth-child(4),
+  .nogna-invoice-table td:nth-child(4) { min-width: 100px; }
+}
