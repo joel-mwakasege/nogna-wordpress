@@ -45,4 +45,6 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Add responsive overflow, spacing, hover, and alignment rules for shared tables.
 - [x] Migrate remaining settings, invoice, customer, and payment select controls to Shadcn Select.
 - [x] Migrate application shell navigation and workspace controls to Shadcn Button.
-- [ ] Migrate remaining screen-specific action buttons and validate all responsive layouts in the browser.
+- [x] Migrate company, customer, tab, and logo-picker actions to Shadcn Button.
+- [x] Migrate invoice editing, grouping, PDF, print, and draft actions to Shadcn Button.
+- [ ] Migrate remaining payment, row, and small utility buttons; then validate all responsive layouts in the browser.
