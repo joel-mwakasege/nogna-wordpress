@@ -809,3 +809,18 @@ html,body{overflow-x:hidden}
   white-space:nowrap!important;
   border:0!important;
 }
+
+
+/* Settings notifications have clear separation from the save action. */
+.nogna-settings-heading .nogna-settings-notice {
+  flex:0 1 auto;
+  margin:0 12px 0 auto;
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  .nogna-settings-heading .nogna-settings-notice {
+    width:100%;
+    margin:0;
+    white-space:normal;
+  }
+}
