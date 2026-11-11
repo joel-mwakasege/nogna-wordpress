@@ -19,8 +19,9 @@ The product must remain simple, fast, understandable, and technically correct.
 - Customer creation, editing, and moving customers to trash.
 - Invoice creation and editing.
 - Invoice sections with repeat multipliers.
-- Grouped line items with shared cost-owner values.
-- Editable units, days, unit amount, group name, and cost owner.
+- Explicit Combined Price groups with selected line items and one cost owner.
+- Independent Remarks field that never activates grouping.
+- Editable units, days, unit amount, Remarks, and Cost owner.
 - Whole-number units and days.
 - Invoice subtotal, discount, tax, and grand-total calculations.
 - Draft persistence and invoice restoration.
@@ -33,6 +34,8 @@ The product must remain simple, fast, understandable, and technically correct.
 - Invoice status based on payment state.
 - Appearance controls in Settings.
 - Responsive desktop, tablet, and mobile layouts.
+- Active navigation location preserved across refresh.
+- Configurable success and error notification colors.
 
 ## Immediate roadmap
 
@@ -109,6 +112,10 @@ If a change cannot answer these questions clearly, pause before implementation.
 - Balance due is invoice total minus active payments, never below zero.
 - Payment status is derived from total, paid amount, balance, and due date.
 - Reordering line items must persist through the invoice save operation.
+- Combined Price groups are explicit selections; matching Remarks text never creates a group.
+- Editing Combined Price must preload existing selections and allow adding or removing members.
+- Applying Combined Price must update every selected section and exit selection mode.
+- Remarks remain separate from group membership and remain visible as ordinary notes.
 - Deleted records should use the existing soft-delete approach where applicable.
 
 ## UI rules
