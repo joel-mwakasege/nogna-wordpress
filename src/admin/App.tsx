@@ -36,7 +36,7 @@ function applyAppearance(s: Appearance) {
 }
 
 export default function App() {
-  const [section, setSection] = useState<Section>('company');
+  const [section, setSection] = useState<Section>(()=>{const saved=window.localStorage.getItem('nogna-active-section');return saved==='home'||saved==='company'||saved==='customers'||saved==='invoices'||saved==='settings'?saved:'company';});
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selected, setSelected] = useState<Company | null>(null);
   const [appearance, setAppearance] = useState<Appearance>(defaults);
@@ -52,7 +52,8 @@ export default function App() {
   }, []);
 
   const title = section === 'company' ? 'My Company' : section === 'customers' ? 'Customers' : section === 'invoices' ? 'Invoices' : section === 'settings' ? 'Settings' : 'Home';
-  const navigate = (next: Section) => setSection(next);
+  useEffect(()=>{window.localStorage.setItem('nogna-active-section',section);},[section]);
+  const navigate = (next: Section) => {setSection(next);window.localStorage.setItem('nogna-active-section',next);};
 
   return <div className={'nogna-app' + (collapsed ? ' is-sidebar-collapsed' : '')}>
     <header className="nogna-app-header">
