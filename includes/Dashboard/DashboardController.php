@@ -305,6 +305,7 @@ final class DashboardController
             wp_script_add_data('nogna-react-admin', 'strategy', 'defer');
             wp_localize_script('nogna-react-admin', 'NognaReact', [
                 'restUrl' => esc_url_raw(rest_url('nogna/v1')),
+                'mediaUrl' => esc_url_raw(rest_url('wp/v2/media')),
                 'nonce' => wp_create_nonce('wp_rest'),
             ]);
             return;
