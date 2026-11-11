@@ -21,7 +21,8 @@ This file records the intended product sequence. New work must be placed here be
 - [ ] Verify Combined Price editing across multiple sections
 - [ ] Verify removing members from an existing Combined Price group
 - [ ] Finalise PDF and print presentation
-- [ ] Verify section subtotals, repeated sections, group totals, and payment state in output
+- [x] Verify section subtotals, repeated sections, group totals, and payment state in output
+- [x] Keep grouped totals consistent between PDF download and browser print preview
 - [ ] Remove all browser print artifacts
 - [ ] Confirm saved invoice reloads with identical data
 
