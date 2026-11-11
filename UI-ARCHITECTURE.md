@@ -47,4 +47,5 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Migrate application shell navigation and workspace controls to Shadcn Button.
 - [x] Migrate company, customer, tab, and logo-picker actions to Shadcn Button.
 - [x] Migrate invoice editing, grouping, PDF, print, and draft actions to Shadcn Button.
-- [ ] Migrate remaining payment, row, and small utility buttons; then validate all responsive layouts in the browser.
+- [x] Migrate payment form, payment history, invoice utility, search-clear, customer form, and settings action buttons.
+- [ ] Migrate remaining row/tab utility controls and validate all responsive layouts in the browser.
