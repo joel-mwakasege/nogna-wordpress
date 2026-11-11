@@ -66,7 +66,7 @@ export default function App() {
 
   return <div className={'nogna-app' + (collapsed ? ' is-sidebar-collapsed' : '')}>
     <header className="nogna-app-header">
-      <div className="nogna-header-title"><Button variant="ghost" className="nogna-sidebar-toggle" onClick={() => setCollapsed(!collapsed)} aria-label="Toggle sidebar"><ChevronLeft size={18}/></button><span>{title}</span></div>
+      <div className="nogna-header-title"><Button variant="ghost" className="nogna-sidebar-toggle" onClick={() => setCollapsed(!collapsed)} aria-label="Toggle sidebar"><ChevronLeft size={18}/></Button><span>{title}</span></div>
       <div className="nogna-header-actions"><HelpCircle size={17}/><CircleUserRound size={17}/></div>
     </header>
     <div className="nogna-app-body">
