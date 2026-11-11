@@ -524,3 +524,32 @@ html,body{overflow-x:hidden}
 
 /* Shadcn token layer */
 :root{--background:0 0% 9%;--foreground:0 0% 95%;--card:0 0% 13%;--card-foreground:0 0% 95%;--popover:0 0% 13%;--popover-foreground:0 0% 95%;--primary:212 82% 64%;--primary-foreground:0 0% 100%;--secondary:0 0% 18%;--secondary-foreground:0 0% 95%;--muted:0 0% 22%;--muted-foreground:0 0% 60%;--accent:0 0% 22%;--accent-foreground:0 0% 95%;--destructive:354 100% 71%;--destructive-foreground:0 0% 10%;--border:0 0% 21%;--input:0 0% 21%;--ring:212 82% 64%}
+
+
+/* Shared Shadcn table layout rules */
+.nogna-invoice-table > div,
+.nogna-customer-rows > div { width: 100%; overflow-x: auto; }
+.nogna-invoice-table table,
+.nogna-customer-rows table { min-width: 620px; }
+.nogna-invoice-table th,
+.nogna-invoice-table td,
+.nogna-customer-rows th,
+.nogna-customer-rows td { vertical-align: middle; }
+.nogna-invoice-table tbody tr,
+.nogna-customer-rows tbody tr { cursor: pointer; }
+.nogna-invoice-table tbody tr:hover,
+.nogna-customer-rows tbody tr:hover { background: color-mix(in srgb, var(--nogna-accent) 8%, transparent); }
+.nogna-invoice-table td strong,
+.nogna-customer-rows td strong { display: block; }
+.nogna-invoice-table td small,
+.nogna-customer-rows td small { display: block; color: var(--nogna-muted); margin-top: 3px; }
+@media (max-width: 760px) {
+  .nogna-invoice-table,
+  .nogna-customer-rows { overflow: hidden; }
+  .nogna-invoice-table table,
+  .nogna-customer-rows table { min-width: 560px; font-size: 13px; }
+  .nogna-invoice-table th,
+  .nogna-invoice-table td,
+  .nogna-customer-rows th,
+  .nogna-customer-rows td { padding: 10px 12px; }
+}
