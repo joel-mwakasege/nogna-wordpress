@@ -144,8 +144,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const [past,setPast]=useState<any[]>([]);
   const [future,setFuture]=useState<any[]>([]);
   const statusLabel=(status:any)=>String(status||'draft').replace('_',' ');
-  const groupsEnabled=appearance.invoice_show_groups !== '0';
-  const groupLabel=appearance.invoice_group_label || 'Group';
+  const groupLabel=appearance.invoice_group_label || 'Remarks';
   const emptySection=()=>({name:'',units_multiplier:1,hide_header:false,items:[{description:'',units:1,days:1,unit_cost:0,group_id:'',is_group_parent:false}]});
   const [draft,setDraft]=useState<any>({document_type:'invoice',document_number:'',customer_id:'',currency:company?.base_currency||'USD',issue_date:new Date().toISOString().slice(0,10),discount_percent:0,tax_percent:0,administrative_notes:'',sections:[emptySection()]});
   const [payment,setPayment]=useState({amount:'',payment_date:new Date().toISOString().slice(0,10),payment_method:'Bank transfer',reference:'',notes:''});
