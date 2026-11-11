@@ -50,4 +50,6 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Migrate payment form, payment history, invoice utility, search-clear, customer form, and settings action buttons.
 - [x] Replace all native button controls in App.tsx with the shared Shadcn Button primitive.
 - [x] Replace all native select controls in App.tsx with the shared Shadcn Select primitive.
+- [x] Migrate repeated input controls to Shadcn Input.
+- [x] Add and migrate textarea controls to Shadcn Textarea.
 - [ ] Validate the complete migrated UI in the browser at desktop, tablet, and mobile widths.
