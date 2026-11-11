@@ -515,3 +515,6 @@ html,body{overflow-x:hidden}
 .nogna-invoice-search-box{position:relative;flex:1;min-width:220px}.nogna-invoice-search-box .nogna-customer-search{width:100%;padding-right:36px}.nogna-search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:0;border-radius:50%;background:transparent;color:var(--nogna-muted);font-size:20px;line-height:20px;cursor:pointer}.nogna-search-clear:hover{background:var(--nogna-elevated);color:var(--nogna-text)}.nogna-invoice-search-context{margin:8px 0 12px;color:var(--nogna-muted);font-size:12px}
 
 .nogna-invoice-trash-row{display:grid;align-items:center;width:100%;text-align:left}.nogna-invoice-trash-row .nogna-secondary-button{justify-self:end;padding:7px 12px}
+
+/* List notifications occupy their own row above search and filters. */
+.nogna-invoice-list>.nogna-customer-notice{display:block;width:100%;box-sizing:border-box;margin:0 0 16px}
