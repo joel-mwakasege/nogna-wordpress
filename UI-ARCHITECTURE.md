@@ -25,3 +25,13 @@ These live under src/admin/components/ui and src/admin/components/layout.
 5. Verify actual imports and usage before claiming a Shadcn-based implementation.
 6. Run the TypeScript build after each migration step.
 7. Existing screens are migrated incrementally; no feature is considered fully migrated until its repeated controls use the shared primitives.
+
+## Migration status
+
+- [x] Shadcn configuration added.
+- [x] Radix Slot and Select dependencies added.
+- [x] Shadcn Button, Input, and Select source components added.
+- [x] Shadcn theme tokens added to Tailwind and CSS.
+- [x] Settings selectors migrated to Radix Select.
+- [x] Repeated primary actions migrated to Shadcn Button.
+- [ ] Migrate remaining dialogs, alerts, cards, tables, and secondary actions.
