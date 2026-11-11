@@ -35,4 +35,6 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Settings selectors migrated to Radix Select.
 - [x] Repeated primary actions migrated to Shadcn Button.
 - [x] Migrate Settings alert and placeholder card.
-- [ ] Migrate remaining dialogs, alerts, cards, tables, and secondary actions.
+- [x] Migrate shared notifications to the Shadcn Alert primitive.
+- [x] Add the Shadcn Dialog primitive and migrate company creation.
+- [ ] Migrate remaining cards, tables, and secondary actions.
