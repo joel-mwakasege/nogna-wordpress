@@ -210,6 +210,7 @@ function InvoiceView({company,appearance}:{company:Company|null;appearance:Appea
   const unitsLabel=appearance.invoice_units_label || 'Units';
   const daysLabel=appearance.invoice_days_label || 'Days';
   const amountLabel=appearance.invoice_unit_amount_label || 'Unit amount';
+  const customerOptions: Array<[string,string]> = [['none','Select customer'], ...customers.map(c => [String(c.id), c.name] as [string,string])];
   const baseSubtotal=draft.sections.reduce((sum:number,s:any)=>sum+sectionSubtotal(s)*(Number(s.units_multiplier)||1),0);
   const discountTotal=baseSubtotal*(Number(draft.discount_percent)||0)/100;
   const taxableTotal=baseSubtotal-discountTotal;
