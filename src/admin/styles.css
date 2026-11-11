@@ -495,3 +495,12 @@ html,body{overflow-x:hidden}
 .nogna-settings-subsection{border-top:1px solid var(--nogna-border);padding-top:18px;margin-top:18px}.nogna-settings-subsection h3{margin:0 0 6px;font-size:16px;font-weight:650;color:var(--nogna-text)}.nogna-settings-subsection .nogna-settings-help{margin:0 0 14px}.nogna-setting-input small{display:block;margin-top:6px;color:var(--nogna-muted);font-size:12px;line-height:1.45}
 
 .nogna-invoice-line.selection-mode{grid-template-columns:28px minmax(180px,1fr) 70px 70px 105px 150px 125px 38px}.nogna-combined-check{display:flex!important;align-items:center;justify-content:center;min-width:0}.nogna-combined-check input{width:17px!important;height:17px!important;accent-color:var(--nogna-accent)}.nogna-combined-check span{display:none!important}.nogna-invoice-line.selection-mode .nogna-combined-check+label{min-width:0}@media(max-width:760px){.nogna-invoice-line.selection-mode{grid-template-columns:28px 1fr 70px 70px 105px 150px 125px 38px}}@media(max-width:520px){.nogna-invoice-line.selection-mode{grid-template-columns:1fr 1fr}.nogna-invoice-line.selection-mode .nogna-combined-check{grid-column:1}.nogna-invoice-line.selection-mode .nogna-combined-check+label{grid-column:1/-1}}
+
+/* Aligned invoice field settings */
+.nogna-settings-subsection .nogna-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:18px 16px}
+.nogna-settings-subsection .nogna-setting-input{min-width:0;display:grid;grid-template-rows:18px 40px auto;align-content:start;gap:7px}
+.nogna-settings-subsection .nogna-setting-input>span{display:block;line-height:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nogna-settings-subsection .nogna-setting-input input,
+.nogna-settings-subsection .nogna-setting-input select{width:100%;height:40px;box-sizing:border-box}
+.nogna-settings-subsection .nogna-setting-input small{min-height:34px;margin-top:0;line-height:17px}
+@media(max-width:640px){.nogna-settings-subsection .nogna-settings-grid{grid-template-columns:1fr}}
