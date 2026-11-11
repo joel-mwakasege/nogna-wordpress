@@ -6,6 +6,7 @@ import { Alert } from './components/ui/Alert';
 import { Card } from './components/ui/Card';
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/Select';
 import { PageHeader } from './components/layout/PageHeader';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './components/ui/Dialog';
 import { Building2, FileText, ChevronDown, ChevronLeft, CircleUserRound, HelpCircle, Home, Pencil, Settings, Trash2, UsersRound } from 'lucide-react';
 
 type Section = 'home' | 'company' | 'customers' | 'invoices' | 'settings';
@@ -115,7 +116,7 @@ function Placeholder({title,text}:{title:string;text:string}) { return <Card cla
 function CompanyCreateForm({value,onChange,onCancel,onCreated}:{value:any;onChange:(v:any)=>void;onCancel:()=>void;onCreated:(c:Company)=>void}) {
   const [error,setError]=useState('');
   const save=()=>api('/companies',{method:'POST',body:JSON.stringify(value)}).then(r=>onCreated(r.data)).catch(e=>setError(e.message));
-  return <div className="nogna-overlay"><div className="nogna-dialog"><h1>Create company</h1><p>Set up the workspace for your business.</p>{['name','slug','base_currency','timezone'].map(key=><label className="nogna-field" key={key}><span>{key.replace('_',' ')}</span><input value={value[key]} onChange={e=>onChange({...value,[key]:e.target.value})}/></label>)}{error&&<Notice message={error} />}<div className="nogna-form-actions"><button className="nogna-secondary-button" onClick={onCancel}>Cancel</button><Button className="nogna-save-button" onClick={save}>Create company</Button></div></div></div>;
+  return <Dialog open onOpenChange={(open)=>{if(!open) onCancel();}}><DialogContent className="nogna-dialog"><DialogHeader><DialogTitle>Create company</DialogTitle><DialogDescription>Set up the workspace for your business.</DialogDescription></DialogHeader>{['name','slug','base_currency','timezone'].map(key=><label className="nogna-field" key={key}><span>{key.replace('_',' ')}</span><input value={value[key]} onChange={e=>onChange({...value,[key]:e.target.value})}/></label>)}{error&&<Notice message={error} />}<DialogFooter><Button variant="secondary" onClick={onCancel}>Cancel</Button><Button onClick={save}>Create company</Button></DialogFooter></DialogContent></Dialog>;
 }
 
 function CustomerView({company}:{company:Company|null}) {
