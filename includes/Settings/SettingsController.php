@@ -77,7 +77,7 @@ final class SettingsController
             'radius' => '10px',
             'logo_url' => '',
             'brand_name' => 'NOGNA',
-            'brand_subtitle' => 'Billing',
+            'brand_subtitle' => '',
             'letterhead_address' => '',
             'letterhead_contact' => '',
             'letterhead_image_url' => '',
