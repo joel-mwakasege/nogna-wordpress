@@ -27,8 +27,9 @@ This file records the intended product sequence. New work must be placed here be
 
 ## Next phase — Invoice list workflow
 
-- [ ] Preserve search, status filter, and list position after editing
-- [ ] Add clear empty, loading, and error states
+- [x] Preserve search and status filter after navigation, refresh, and editing
+- [x] Add clear loading and error states
+- [ ] Preserve exact scroll position after editing
 - [ ] Add soft-delete and recovery workflow for invoices
 
 ## Later phases
