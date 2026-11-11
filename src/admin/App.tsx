@@ -74,7 +74,6 @@ export default function App() {
       <aside className="nogna-app-sidebar">
         <div className="nogna-logo">{appearance.logo_url && <img src={appearance.logo_url} alt={appearance.brand_name}/>}<div>{appearance.brand_name}<small>{appearance.brand_subtitle}</small></div></div>
         <Button variant="ghost" className={section === 'home' ? 'is-active' : ''} onClick={() => navigate('home')}><Home size={18}/><span className="nogna-nav-text">Home</span></Button>
-        <div className="nogna-sidebar-label">MASTER DATA</div>
         <Button variant="ghost" className={section === 'customers' ? 'is-active' : ''} onClick={() => navigate('customers')}><UsersRound size={18}/><span className="nogna-nav-text">Customers</span></Button>
         <Button variant="ghost" className={section === 'invoices' ? 'is-active' : ''} onClick={() => navigate('invoices')}><FileText size={18}/><span className="nogna-nav-text">Invoices</span></Button>
         <Button variant="ghost" className={section === 'company' ? 'is-active' : ''} onClick={() => navigate('company')}><Building2 size={18}/><span className="nogna-nav-text">My Company</span></Button>
