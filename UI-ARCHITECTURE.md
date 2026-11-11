@@ -40,4 +40,5 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Replace Card with the Shadcn Card primitive.
 - [x] Add the Shadcn Table primitive for list/table migration.
 - [x] Migrate high-visibility secondary actions to Shadcn Button.
-- [ ] Wire remaining invoice/customer tables to the shared Table primitive.
+- [x] Wire the invoice list to the shared Table primitive.
+- [ ] Wire the customer list to the shared Table primitive.
