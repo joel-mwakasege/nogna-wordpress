@@ -824,3 +824,18 @@ html,body{overflow-x:hidden}
     white-space:normal;
   }
 }
+
+
+.nogna-logo-picker {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+}
+.nogna-logo-picker input {
+  min-width:220px;
+  flex:1 1 260px;
+}
+.nogna-logo-picker button {
+  flex:0 0 auto;
+}
