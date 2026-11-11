@@ -726,3 +726,16 @@ html,body{overflow-x:hidden}
 .nogna-company-row .nogna-more { margin-left:auto; flex:0 0 auto; }
 .nogna-company-row strong,
 .nogna-company-row small { line-height:1.25; }
+
+
+/* My Company tabs use a neutral active state; no blue bottom glow. */
+.nogna-tabs button,
+.nogna-detail-tabs button { border-bottom-color:transparent!important; }
+.nogna-tabs button.is-active,
+.nogna-detail-tabs button.is-active {
+  border-bottom-color:transparent!important;
+  background:var(--nogna-elevated);
+  border-radius:6px 6px 0 0;
+  color:var(--nogna-text);
+  box-shadow:none;
+}
