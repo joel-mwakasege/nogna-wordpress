@@ -764,3 +764,34 @@ html,body{overflow-x:hidden}
   box-shadow:none!important;
   outline:none;
 }
+
+
+/* Uploaded letterhead artwork is used as-is in settings and invoice output. */
+.nogna-letterhead-preview {
+  display:block;
+  width:100%;
+  max-height:180px;
+  margin-top:12px;
+  object-fit:contain;
+  object-position:left center;
+  border:1px solid var(--nogna-border);
+  border-radius:7px;
+  background:#fff;
+}
+.nogna-print-letterhead-image {
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:180px;
+  margin:0 0 24px;
+  object-fit:contain;
+  object-position:top center;
+}
+@media print {
+  .nogna-print-letterhead-image {
+    display:block!important;
+    width:100%!important;
+    max-height:none!important;
+    margin:0 0 24px!important;
+  }
+}
