@@ -71,6 +71,7 @@ Run this checklist after every invoice, payment, navigation, or layout change.
 - [ ] No horizontal overflow.
 - [ ] Settings fields align correctly.
 - [ ] Notifications do not crowd forms.
+- [ ] Invoice list notifications sit on their own row above search and filters.
 - [ ] Combined Price selection controls do not push other fields out of view.
 
 ## Build
