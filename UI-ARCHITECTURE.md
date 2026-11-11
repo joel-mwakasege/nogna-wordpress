@@ -44,4 +44,5 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Wire the customer list to the shared Table primitive.
 - [x] Add responsive overflow, spacing, hover, and alignment rules for shared tables.
 - [x] Migrate remaining settings, invoice, customer, and payment select controls to Shadcn Select.
-- [ ] Finish remaining one-off secondary controls and validate all responsive table layouts in the browser.
+- [x] Migrate application shell navigation and workspace controls to Shadcn Button.
+- [ ] Migrate remaining screen-specific action buttons and validate all responsive layouts in the browser.
