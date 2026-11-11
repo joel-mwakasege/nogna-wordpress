@@ -18,7 +18,8 @@
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.9",
     "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-select": "^2.2.5"
+    "@radix-ui/react-select": "^2.2.5",
+    "@radix-ui/react-dialog": "^1.1.6"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
