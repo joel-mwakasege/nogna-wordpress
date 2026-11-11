@@ -739,3 +739,28 @@ html,body{overflow-x:hidden}
   color:var(--nogna-text);
   box-shadow:none;
 }
+
+
+/* Inner navigation has text-only active and hover states. */
+.nogna-tabs button,
+.nogna-detail-tabs button {
+  border:0!important;
+  border-bottom:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:var(--nogna-muted)!important;
+}
+.nogna-tabs button:hover,
+.nogna-tabs button:focus-visible,
+.nogna-detail-tabs button:hover,
+.nogna-detail-tabs button:focus-visible,
+.nogna-tabs button.is-active,
+.nogna-detail-tabs button.is-active {
+  background:transparent!important;
+  color:var(--nogna-text)!important;
+  border:0!important;
+  border-bottom:0!important;
+  box-shadow:none!important;
+  outline:none;
+}
