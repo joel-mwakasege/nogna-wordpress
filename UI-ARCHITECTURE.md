@@ -37,4 +37,7 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Migrate Settings alert and placeholder card.
 - [x] Migrate shared notifications to the Shadcn Alert primitive.
 - [x] Add the Shadcn Dialog primitive and migrate company creation.
-- [ ] Migrate remaining cards, tables, and secondary actions.
+- [x] Replace Card with the Shadcn Card primitive.
+- [x] Add the Shadcn Table primitive for list/table migration.
+- [x] Migrate high-visibility secondary actions to Shadcn Button.
+- [ ] Wire remaining invoice/customer tables to the shared Table primitive.
