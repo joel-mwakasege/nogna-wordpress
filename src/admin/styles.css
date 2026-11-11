@@ -504,3 +504,10 @@ html,body{overflow-x:hidden}
 .nogna-settings-subsection .nogna-setting-input select{width:100%;height:40px;box-sizing:border-box}
 .nogna-settings-subsection .nogna-setting-input small{min-height:34px;margin-top:0;line-height:17px}
 @media(max-width:640px){.nogna-settings-subsection .nogna-settings-grid{grid-template-columns:1fr}}
+
+/* Combined Price selection uses the existing row width; the checkbox sits in the left gutter. */
+.nogna-invoice-line.selection-mode{position:relative;grid-template-columns:minmax(180px,1fr) 70px 70px 105px 150px 125px 38px}
+.nogna-invoice-line.selection-mode .nogna-combined-check{position:absolute!important;left:4px;top:11px;width:22px!important;height:22px;z-index:2;display:flex!important}
+.nogna-invoice-line.selection-mode .nogna-combined-check+label{padding-left:30px}
+@media(max-width:760px){.nogna-invoice-line.selection-mode{grid-template-columns:1fr 70px 70px 105px 150px 125px 38px}}
+@media(max-width:520px){.nogna-invoice-line.selection-mode{grid-template-columns:1fr 1fr}.nogna-invoice-line.selection-mode .nogna-combined-check{left:4px;top:11px}.nogna-invoice-line.selection-mode .nogna-combined-check+label{grid-column:1/-1;padding-left:30px}}
