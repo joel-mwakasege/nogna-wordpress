@@ -34,4 +34,5 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Shadcn theme tokens added to Tailwind and CSS.
 - [x] Settings selectors migrated to Radix Select.
 - [x] Repeated primary actions migrated to Shadcn Button.
+- [x] Migrate Settings alert and placeholder card.
 - [ ] Migrate remaining dialogs, alerts, cards, tables, and secondary actions.
