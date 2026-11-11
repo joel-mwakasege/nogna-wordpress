@@ -41,4 +41,5 @@ These live under src/admin/components/ui and src/admin/components/layout.
 - [x] Add the Shadcn Table primitive for list/table migration.
 - [x] Migrate high-visibility secondary actions to Shadcn Button.
 - [x] Wire the invoice list to the shared Table primitive.
-- [ ] Wire the customer list to the shared Table primitive.
+- [x] Wire the customer list to the shared Table primitive.
+- [ ] Finish remaining one-off secondary controls and validate all responsive table layouts.
