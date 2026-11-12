@@ -40,7 +40,7 @@ final class SettingsController
         $saved = [];
         foreach ($defaults as $key => $default) {
             $value = $incoming[$key] ?? $default;
-            $saved[$key] = is_string($value) ? sanitize_text_field($value) : $default;
+            $saved[$key] = is_string($value) ? ($key === 'invoice_terms_text' ? wp_kses_post($value) : sanitize_text_field($value)) : $default;
         }
 
         update_option(self::OPTION, $saved, false);
@@ -81,6 +81,8 @@ final class SettingsController
             'letterhead_address' => '',
             'letterhead_contact' => '',
             'letterhead_image_url' => '',
+            'invoice_terms_title' => 'TERMS',
+            'invoice_terms_text' => '',
         ];
     }
 }
