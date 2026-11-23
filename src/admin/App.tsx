@@ -10,10 +10,11 @@ import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, Selec
 import { PageHeader } from './components/layout/PageHeader';
 import { ExpensesView } from './ExpensesView';
 import { ExpenseSettings } from './ExpenseSettings';
+import { AccountsView } from './AccountsView';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './components/ui/Dialog';
 import { Building2, FileText, ChevronDown, ChevronLeft, CircleUserRound, HelpCircle, Home, Pencil, Settings, Trash2, UsersRound } from 'lucide-react';
 
-type Section = 'home' | 'company' | 'customers' | 'invoices' | 'expenses' | 'settings';
+type Section = 'home' | 'company' | 'customers' | 'invoices' | 'expenses' | 'accounts' | 'settings';
 type Company = { id: number; name: string; slug: string; base_currency: string; timezone: string; role?: string };
 type Appearance = Record<string, string>;
 declare global { interface Window { NognaReact?: { restUrl: string; mediaUrl?: string; nonce: string }; wp?: any } }
@@ -48,7 +49,7 @@ function applyAppearance(s: Appearance) {
 }
 
 export default function App() {
-  const [section, setSection] = useState<Section>(()=>{const saved=window.localStorage.getItem('nogna-active-section');return saved==='home'||saved==='company'||saved==='customers'||saved==='invoices'||saved==='expenses'||saved==='settings'?saved:'company';});
+  const [section, setSection] = useState<Section>(()=>{const saved=window.localStorage.getItem('nogna-active-section');return saved==='home'||saved==='company'||saved==='customers'||saved==='invoices'||saved==='expenses'||saved==='accounts'||saved==='settings'?saved:'company';});
   const [companies, setCompanies] = useState<Company[]>([]);
   const [selected, setSelected] = useState<Company | null>(null);
   const [appearance, setAppearance] = useState<Appearance>(defaults);
@@ -63,7 +64,7 @@ export default function App() {
     }).finally(() => setLoading(false));
   }, []);
 
-  const title = section === 'company' ? 'My Company' : section === 'customers' ? 'Customers' : section === 'invoices' ? 'Invoices' : section === 'expenses' ? 'Expenses' : section === 'settings' ? 'Settings' : 'Home';
+  const title = section === 'company' ? 'My Company' : section === 'customers' ? 'Customers' : section === 'invoices' ? 'Invoices' : section === 'expenses' ? 'Expenses' : section === 'accounts' ? 'Accounts' : section === 'settings' ? 'Settings' : 'Home';
   useEffect(()=>{window.localStorage.setItem('nogna-active-section',section);},[section]);
   const navigate = (next: Section) => {setSection(next);window.localStorage.setItem('nogna-active-section',next);};
 
@@ -79,6 +80,7 @@ export default function App() {
         <Button variant="ghost" className={section === 'customers' ? 'is-active' : ''} onClick={() => navigate('customers')}><UsersRound size={18}/><span className="nogna-nav-text">Customers</span></Button>
         <Button variant="ghost" className={section === 'invoices' ? 'is-active' : ''} onClick={() => navigate('invoices')}><FileText size={18}/><span className="nogna-nav-text">Invoices</span></Button>
         <Button variant="ghost" className={section === 'expenses' ? 'is-active' : ''} onClick={() => navigate('expenses')}><FileText size={18}/><span className="nogna-nav-text">Expenses</span></Button>
+        <Button variant="ghost" className={section === 'accounts' ? 'is-active' : ''} onClick={() => navigate('accounts')}><Building2 size={18}/><span className="nogna-nav-text">Accounts</span></Button>
         <Button variant="ghost" className={section === 'company' ? 'is-active' : ''} onClick={() => navigate('company')}><Building2 size={18}/><span className="nogna-nav-text">My Company</span></Button>
         <div className="nogna-company-account">
           <Button variant="ghost" className="nogna-company-switcher" onClick={() => navigate('company')}><span className="nogna-company-avatar">{selected?.name?.charAt(0) || 'N'}</span><span className="nogna-nav-text"><small>Workspace</small><strong>{selected?.name || 'No workspace'}</strong></span><ChevronDown size={15}/></Button>
@@ -90,6 +92,7 @@ export default function App() {
         {section === 'customers' && <CustomerView company={selected}/>}
         {section === 'invoices' && <InvoiceView company={selected} appearance={appearance}/>}
         {section === 'expenses' && <ExpensesView company={selected}/>}
+        {section === 'accounts' && <AccountsView company={selected}/>}
         {section === 'home' && <Placeholder title="Home" text="Your financial dashboard will appear here once income, expenses, and payments are implemented."/>}
         {section === 'settings' && <SettingsView companyId={selected?.id||null} value={appearance} onChange={(next) => {setAppearance(next); applyAppearance(next);}}/>}{showCompanyForm && <CompanyCreateForm value={companyForm} onChange={setCompanyForm} onCancel={()=>setShowCompanyForm(false)} onCreated={(company)=>{setCompanies([...companies,company]);setSelected(company);setShowCompanyForm(false);setSection('company');}}/>}
       </main>
