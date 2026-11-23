@@ -5,7 +5,8 @@ import { Button } from './components/ui/Button';
 import { Alert } from './components/ui/Alert';
 import { Card } from './components/ui/Card';
 import { PageHeader } from './components/layout/PageHeader';
-import { SettingsSelect } from './App';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/Select';
+const SettingsSelect=({value,onChange,options}:{value:string;onChange:(v:string)=>void;options:string[][]})=><Select value={value} onValueChange={onChange}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{options.map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select>;
 
 type Company = { id: number; name: string; base_currency: string };
 type Expense = { id:number; expense_date:string; description:string; category:string; payee:string; amount:string|number; currency:string; payment_status:string; notes:string; receipt_url?:string };
