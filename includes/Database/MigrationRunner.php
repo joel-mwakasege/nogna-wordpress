@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 final class MigrationRunner
 {
     private const VERSION_OPTION = 'nogna_billing_schema_version';
-    private const SCHEMA_VERSION = '0.5.0';
+    private const SCHEMA_VERSION = '0.6.0';
 
     public function run(): void
     {
@@ -167,6 +167,31 @@ final class MigrationRunner
             created_at datetime NOT NULL,
             PRIMARY KEY (id),
             KEY invoice_sort (invoice_id, sort_order)
+        ) {$charset};");
+
+        $expenses = $wpdb->prefix . 'nogna_expenses';
+
+        dbDelta("CREATE TABLE {$expenses} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+            company_id bigint(20) unsigned NOT NULL,
+            expense_date date NOT NULL,
+            description varchar(255) NOT NULL,
+            category varchar(120) NOT NULL DEFAULT '',
+            payee varchar(190) NOT NULL DEFAULT '',
+            amount decimal(20,6) NOT NULL DEFAULT 0,
+            currency char(3) NOT NULL,
+            payment_status varchar(30) NOT NULL DEFAULT 'unpaid',
+            notes text NULL,
+            receipt_url text NULL,
+            created_by bigint(20) unsigned NOT NULL,
+            created_at datetime NOT NULL,
+            updated_at datetime NOT NULL,
+            deleted_at datetime NULL,
+            deleted_by bigint(20) unsigned NULL,
+            PRIMARY KEY (id),
+            KEY company_date (company_id, expense_date),
+            KEY company_status (company_id, payment_status),
+            KEY company_deleted (company_id, deleted_at)
         ) {$charset};");
 
         $payments = $wpdb->prefix . 'nogna_invoice_payments';
