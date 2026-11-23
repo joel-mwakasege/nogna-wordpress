@@ -73,19 +73,23 @@ final class ExpenseController
     private function data(\WP_REST_Request $request): array
     {
         $status=(string)$request->get_param('payment_status');
+        $entered=max(0,(float)$request->get_param('amount')); $rate=max(0,min(100,(float)$request->get_param('tax_rate'))); $mode=in_array($request->get_param('tax_mode'),['none','exclusive','inclusive'],true)?$request->get_param('tax_mode'):'none';
+        $net=$entered; $tax=0; $total=$entered;
+        if($mode==='exclusive'){ $tax=round($entered*$rate/100,6); $total=$entered+$tax; }
+        elseif($mode==='inclusive' && $rate>0){ $net=round($entered/(1+$rate/100),6); $tax=$entered-$net; }
         return [
             'expense_date'=>sanitize_text_field((string)($request->get_param('expense_date')?:current_time('Y-m-d'))),
             'description'=>sanitize_text_field((string)$request->get_param('description')),
             'category'=>sanitize_text_field((string)$request->get_param('category')),
             'payee'=>sanitize_text_field((string)$request->get_param('payee')),
-            'amount'=>max(0,(float)$request->get_param('amount')),
+            'amount'=>$total,
             'currency'=>strtoupper(sanitize_text_field((string)($request->get_param('currency')?:'USD'))),
             'payment_status'=>in_array($status,['unpaid','partially_paid','paid'],true)?$status:'unpaid',
             'account_id'=>max(0,(int)$request->get_param('account_id')),
-            'tax_mode'=>in_array($request->get_param('tax_mode'),['none','exclusive','inclusive'],true)?$request->get_param('tax_mode'):'none',
-            'tax_rate'=>max(0,min(100,(float)$request->get_param('tax_rate'))),
-            'tax_amount'=>max(0,(float)$request->get_param('tax_amount')),
-            'net_amount'=>max(0,(float)$request->get_param('net_amount')),
+            'tax_mode'=>$mode,
+            'tax_rate'=>$rate,
+            'tax_amount'=>$tax,
+            'net_amount'=>$net,
             'payment_method'=>sanitize_text_field((string)$request->get_param('payment_method')),
             'notes'=>sanitize_textarea_field((string)$request->get_param('notes')),
             'receipt_url'=>esc_url_raw((string)$request->get_param('receipt_url')),
