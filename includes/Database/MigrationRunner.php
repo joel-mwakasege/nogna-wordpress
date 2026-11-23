@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 final class MigrationRunner
 {
     private const VERSION_OPTION = 'nogna_billing_schema_version';
-    private const SCHEMA_VERSION = '0.7.0';
+    private const SCHEMA_VERSION = '0.8.0';
 
     public function run(): void
     {
@@ -171,13 +171,13 @@ final class MigrationRunner
 
         $categories = $wpdb->prefix . 'nogna_expense_categories';
         dbDelta("CREATE TABLE {$categories} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id bigint(20) unsigned NOT NULL, name varchar(120) NOT NULL,
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id bigint(20) unsigned NOT NULL, name varchar(120) NOT NULL, description text NULL, is_active tinyint(1) NOT NULL DEFAULT 1,
             created_by bigint(20) unsigned NOT NULL, created_at datetime NOT NULL, updated_at datetime NOT NULL, deleted_at datetime NULL, deleted_by bigint(20) unsigned NULL,
             PRIMARY KEY (id), UNIQUE KEY company_name (company_id, name), KEY company_deleted (company_id, deleted_at)
         ) {$charset};");
         $accounts = $wpdb->prefix . 'nogna_expense_accounts';
         dbDelta("CREATE TABLE {$accounts} (
-            id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id bigint(20) unsigned NOT NULL, name varchar(190) NOT NULL, type varchar(30) NOT NULL DEFAULT 'bank', currency char(3) NOT NULL DEFAULT 'TZS', opening_balance decimal(20,6) NOT NULL DEFAULT 0,
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id bigint(20) unsigned NOT NULL, name varchar(190) NOT NULL, type varchar(30) NOT NULL DEFAULT 'bank', provider varchar(190) NOT NULL DEFAULT '', account_reference varchar(190) NOT NULL DEFAULT '', currency char(3) NOT NULL DEFAULT 'TZS', opening_balance decimal(20,6) NOT NULL DEFAULT 0, is_active tinyint(1) NOT NULL DEFAULT 1,
             created_by bigint(20) unsigned NOT NULL, created_at datetime NOT NULL, updated_at datetime NOT NULL, deleted_at datetime NULL, deleted_by bigint(20) unsigned NULL,
             PRIMARY KEY (id), KEY company_name (company_id, name), KEY company_deleted (company_id, deleted_at)
         ) {$charset};");
