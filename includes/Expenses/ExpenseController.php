@@ -30,7 +30,7 @@ final class ExpenseController
     public function index(\WP_REST_Request $request): \WP_REST_Response
     {
         global $wpdb;
-        $rows=$wpdb->get_results($wpdb->prepare("SELECT * FROM {$this->table()} WHERE company_id=%d AND deleted_at IS NULL ORDER BY expense_date DESC, id DESC",(int)$request['company_id']),ARRAY_A);
+        $rows=$wpdb->get_results($wpdb->prepare("SELECT e.*, a.name account_name FROM {$this->table()} e LEFT JOIN {$wpdb->prefix}nogna_expense_accounts a ON a.id=e.account_id WHERE e.company_id=%d AND deleted_at IS NULL ORDER BY expense_date DESC, id DESC",(int)$request['company_id']),ARRAY_A);
         return new \WP_REST_Response(['data'=>$rows]);
     }
 
@@ -81,6 +81,12 @@ final class ExpenseController
             'amount'=>max(0,(float)$request->get_param('amount')),
             'currency'=>strtoupper(sanitize_text_field((string)($request->get_param('currency')?:'USD'))),
             'payment_status'=>in_array($status,['unpaid','partially_paid','paid'],true)?$status:'unpaid',
+            'account_id'=>max(0,(int)$request->get_param('account_id')),
+            'tax_mode'=>in_array($request->get_param('tax_mode'),['none','exclusive','inclusive'],true)?$request->get_param('tax_mode'):'none',
+            'tax_rate'=>max(0,min(100,(float)$request->get_param('tax_rate'))),
+            'tax_amount'=>max(0,(float)$request->get_param('tax_amount')),
+            'net_amount'=>max(0,(float)$request->get_param('net_amount')),
+            'payment_method'=>sanitize_text_field((string)$request->get_param('payment_method')),
             'notes'=>sanitize_textarea_field((string)$request->get_param('notes')),
             'receipt_url'=>esc_url_raw((string)$request->get_param('receipt_url')),
         ];
@@ -88,7 +94,7 @@ final class ExpenseController
 
     private function find(int $company,int $id): ?array
     {
-        global $wpdb; $row=$wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table()} WHERE id=%d AND company_id=%d AND deleted_at IS NULL",$id,$company),ARRAY_A);
+        global $wpdb; $row=$wpdb->get_row($wpdb->prepare("SELECT e.*, a.name account_name FROM {$this->table()} e LEFT JOIN {$wpdb->prefix}nogna_expense_accounts a ON a.id=e.account_id WHERE e.id=%d AND e.company_id=%d AND e.deleted_at IS NULL",$id,$company),ARRAY_A);
         return $row?:null;
     }
 
