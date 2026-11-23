@@ -36,10 +36,8 @@ This file records the intended product sequence. New work must be placed here be
 ## Later phases
 
 ### Expenses
-- [ ] Expense/receipt records
-- [ ] Suppliers or payees
-- [ ] Categories
-- [ ] Payment status
+- [x] Expense records with suppliers/payees, categories, payment status, account source, and basic tax fields
+- [ ] Verify expense calculations and account-source persistence
 - [ ] Receipt attachments
 - [ ] Review workflow
 
