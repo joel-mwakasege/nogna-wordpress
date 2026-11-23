@@ -37,6 +37,8 @@ This file records the intended product sequence. New work must be placed here be
 
 ### Expenses
 - [x] Expense records with suppliers/payees, categories, payment status, account source, and basic tax fields
+- [x] Editable workspace-defined expense categories
+- [x] Dedicated bank, cash, and mobile-money Accounts module
 - [ ] Verify expense calculations and account-source persistence
 - [ ] Receipt attachments
 - [ ] Review workflow
