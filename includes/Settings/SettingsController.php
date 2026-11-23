@@ -48,9 +48,11 @@ final class SettingsController
             return new \WP_REST_Response(['message' => 'Portal link must contain at least one letter or number.'], 400);
         }
         $page_id = (int) get_option('nogna_dashboard_page_id', 0);
-        $conflict = get_page_by_path($slug, OBJECT, ['page', 'post', 'attachment']);
-        if ($conflict && (int) $conflict->ID !== $page_id) {
-            return new \WP_REST_Response(['message' => 'That portal link is already used by another WordPress item. Choose a different link.'], 409);
+        $public_types = get_post_types(['public' => true]);
+        $conflict = get_page_by_path($slug, OBJECT, array_values(array_unique(array_merge($public_types, ['attachment']))));
+        $unique_slug = wp_unique_post_slug($slug, $page_id, 'publish', 'page', 0);
+        if (($conflict && (int) $conflict->ID !== $page_id) || $unique_slug !== $slug) {
+            return new \WP_REST_Response(['message' => 'That portal link conflicts with another WordPress item or reserved permalink. Choose a different link.'], 409);
         }
         if ($page_id && get_post_status($page_id)) {
             $updated = wp_update_post(['ID' => $page_id, 'post_name' => $slug], true);
