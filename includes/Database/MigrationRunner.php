@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 final class MigrationRunner
 {
     private const VERSION_OPTION = 'nogna_billing_schema_version';
-    private const SCHEMA_VERSION = '0.6.0';
+    private const SCHEMA_VERSION = '0.7.0';
 
     public function run(): void
     {
@@ -169,6 +169,18 @@ final class MigrationRunner
             KEY invoice_sort (invoice_id, sort_order)
         ) {$charset};");
 
+        $categories = $wpdb->prefix . 'nogna_expense_categories';
+        dbDelta("CREATE TABLE {$categories} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id bigint(20) unsigned NOT NULL, name varchar(120) NOT NULL,
+            created_by bigint(20) unsigned NOT NULL, created_at datetime NOT NULL, updated_at datetime NOT NULL, deleted_at datetime NULL, deleted_by bigint(20) unsigned NULL,
+            PRIMARY KEY (id), UNIQUE KEY company_name (company_id, name), KEY company_deleted (company_id, deleted_at)
+        ) {$charset};");
+        $accounts = $wpdb->prefix . 'nogna_expense_accounts';
+        dbDelta("CREATE TABLE {$accounts} (
+            id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id bigint(20) unsigned NOT NULL, name varchar(190) NOT NULL, type varchar(30) NOT NULL DEFAULT 'bank', currency char(3) NOT NULL DEFAULT 'TZS', opening_balance decimal(20,6) NOT NULL DEFAULT 0,
+            created_by bigint(20) unsigned NOT NULL, created_at datetime NOT NULL, updated_at datetime NOT NULL, deleted_at datetime NULL, deleted_by bigint(20) unsigned NULL,
+            PRIMARY KEY (id), KEY company_name (company_id, name), KEY company_deleted (company_id, deleted_at)
+        ) {$charset};");
         $expenses = $wpdb->prefix . 'nogna_expenses';
 
         dbDelta("CREATE TABLE {$expenses} (
@@ -181,6 +193,12 @@ final class MigrationRunner
             amount decimal(20,6) NOT NULL DEFAULT 0,
             currency char(3) NOT NULL,
             payment_status varchar(30) NOT NULL DEFAULT 'unpaid',
+            account_id bigint(20) unsigned NULL,
+            tax_mode varchar(20) NOT NULL DEFAULT 'none',
+            tax_rate decimal(10,6) NOT NULL DEFAULT 0,
+            tax_amount decimal(20,6) NOT NULL DEFAULT 0,
+            net_amount decimal(20,6) NOT NULL DEFAULT 0,
+            payment_method varchar(80) NOT NULL DEFAULT '',
             notes text NULL,
             receipt_url text NULL,
             created_by bigint(20) unsigned NOT NULL,
