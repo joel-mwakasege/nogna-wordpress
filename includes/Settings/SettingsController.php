@@ -43,6 +43,22 @@ final class SettingsController
             $saved[$key] = is_string($value) ? ($key === 'invoice_terms_text' ? wp_kses_post($value) : sanitize_text_field($value)) : $default;
         }
 
+        $slug = sanitize_title((string) ($incoming['portal_slug'] ?? $defaults['portal_slug']));
+        if ($slug === '') {
+            return new \WP_REST_Response(['message' => 'Portal link must contain at least one letter or number.'], 400);
+        }
+        $page_id = (int) get_option('nogna_dashboard_page_id', 0);
+        $conflict = get_page_by_path($slug, OBJECT, ['page', 'post', 'attachment']);
+        if ($conflict && (int) $conflict->ID !== $page_id) {
+            return new \WP_REST_Response(['message' => 'That portal link is already used by another WordPress item. Choose a different link.'], 409);
+        }
+        if ($page_id && get_post_status($page_id)) {
+            $updated = wp_update_post(['ID' => $page_id, 'post_name' => $slug], true);
+            if (is_wp_error($updated)) {
+                return new \WP_REST_Response(['message' => 'The portal link could not be updated.'], 500);
+            }
+        }
+        $saved['portal_slug'] = $slug;
         update_option(self::OPTION, $saved, false);
         return new \WP_REST_Response(['data' => $saved]);
     }
@@ -83,6 +99,7 @@ final class SettingsController
             'letterhead_image_url' => '',
             'invoice_terms_title' => 'TERMS',
             'invoice_terms_text' => '',
+            'portal_slug' => 'nogna-dashboard',
         ];
     }
 }
