@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Input } from './components/ui/Input';
 import { Button } from './components/ui/Button';
 import { Card } from './components/ui/Card';
-import { SettingsSelect } from './components/ui/Select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/Select';
+const SettingsSelect=({value,onChange,options}:{value:string;onChange:(v:string)=>void;options:string[][]})=><Select value={value} onValueChange={onChange}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{options.map(([key,label])=><SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent></Select>;
 
 const api=(path:string,options:RequestInit={})=>fetch((window.NognaReact?.restUrl||'')+path,{credentials:'include',...options,headers:{'Content-Type':'application/json','X-WP-Nonce':window.NognaReact?.nonce||'',...(options.headers||{})}}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.message||'Request failed.');return d;});
 
