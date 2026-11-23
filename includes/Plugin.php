@@ -9,6 +9,7 @@ use Nogna\Billing\Database\MigrationRunner;
 use Nogna\Billing\Dashboard\DashboardController;
 use Nogna\Billing\Settings\SettingsController;
 use Nogna\Billing\Invoices\InvoiceController;
+use Nogna\Billing\Expenses\ExpenseController;
 
 final class Plugin
 {
@@ -56,7 +57,9 @@ final class Plugin
         $remarks_exists = $items_exists && (bool) $wpdb->get_var($wpdb->prepare("SHOW COLUMNS FROM {$items} LIKE %s", 'remarks'));
         $payments = $wpdb->prefix . 'nogna_invoice_payments';
         $payments_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $payments)) === $payments;
-        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists || !$payments_exists) {
+        $expenses = $wpdb->prefix . 'nogna_expenses';
+        $expenses_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $expenses)) === $expenses;
+        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists || !$payments_exists || !$expenses_exists) {
             (new MigrationRunner())->run();
         }
     }
@@ -85,6 +88,7 @@ final class Plugin
         (new CompanyController())->register_routes();
         (new CustomerController())->register_routes();
         (new InvoiceController())->register_routes();
+        (new ExpenseController())->register_routes();
         (new SettingsController())->register_routes();
     }
 
