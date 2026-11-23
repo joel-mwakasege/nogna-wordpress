@@ -10,6 +10,7 @@ use Nogna\Billing\Dashboard\DashboardController;
 use Nogna\Billing\Settings\SettingsController;
 use Nogna\Billing\Invoices\InvoiceController;
 use Nogna\Billing\Expenses\ExpenseController;
+use Nogna\Billing\Expenses\ExpenseSettingsController;
 
 final class Plugin
 {
@@ -59,7 +60,10 @@ final class Plugin
         $payments_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $payments)) === $payments;
         $expenses = $wpdb->prefix . 'nogna_expenses';
         $expenses_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $expenses)) === $expenses;
-        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists || !$payments_exists || !$expenses_exists) {
+        $categories = $wpdb->prefix . 'nogna_expense_categories';
+        $accounts = $wpdb->prefix . 'nogna_expense_accounts';
+        $expense_settings_exist = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $categories)) === $categories && $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $accounts)) === $accounts;
+        if (!$sections_exists || !$section_id_exists || !$unit_cost_exists || !$group_id_exists || !$group_parent_exists || !$remarks_exists || !$payments_exists || !$expenses_exists || !$expense_settings_exist) {
             (new MigrationRunner())->run();
         }
     }
@@ -89,6 +93,7 @@ final class Plugin
         (new CustomerController())->register_routes();
         (new InvoiceController())->register_routes();
         (new ExpenseController())->register_routes();
+        (new ExpenseSettingsController())->register_routes();
         (new SettingsController())->register_routes();
     }
 
