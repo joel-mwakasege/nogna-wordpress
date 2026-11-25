@@ -850,3 +850,10 @@ html,body{overflow-x:hidden}
 .nogna-expense-form .nogna-settings-grid{margin-top:20px}
 .nogna-expense-form .nogna-form-actions{margin-top:20px}
 .nogna-expense-settings .nogna-settings-grid{align-items:start}
+
+/* Invoice editor form language: no generic card outlines or bright focus treatment. */
+.nogna-customer-form,.nogna-expense-form,.nogna-account-form{border:0!important;background:transparent!important;box-shadow:none!important;border-radius:0!important}
+.nogna-customer-form .nogna-field input,.nogna-customer-form .nogna-field textarea,.nogna-customer-form .nogna-field button,.nogna-expense-form .nogna-field input,.nogna-expense-form .nogna-field textarea,.nogna-expense-form .nogna-field button,.nogna-account-form .nogna-field input,.nogna-account-form .nogna-field textarea,.nogna-account-form .nogna-field button{border-color:var(--nogna-border);background:#242424;color:var(--nogna-text);box-shadow:none}
+.nogna-customer-form .nogna-field button:focus,.nogna-expense-form .nogna-field button:focus,.nogna-account-form .nogna-field button:focus{outline:none;box-shadow:none;border-color:var(--nogna-border)}
+.nogna-account-form{max-width:900px;padding:0;margin-bottom:24px}
+.nogna-account-form h1{margin:0 0 10px;font-size:24px;font-weight:500}
